@@ -1,0 +1,336 @@
+<template>
+    <v-container class="px-10 hmmsdashboard" fluid style="height:100vh;">
+        <!-- Breadcrumb Navigation -->
+        <v-breadcrumbs :items="breadcrumbs" class="breadcrumbs-container">
+            <template v-slot:divider>
+                <v-icon color="white">mdi-chevron-right</v-icon>
+            </template>
+            <template v-slot:item="{ item }">
+                <v-breadcrumbs-item 
+                    :href="item.href" 
+                    :disabled="item.disabled" 
+                    class="custom-breadcrumb-item"
+                >
+                    {{ item.text }}
+                </v-breadcrumbs-item>
+            </template>
+        </v-breadcrumbs>
+
+        <div class="text-h6 mb-4 mt-6 dashboard-title">
+            TECHNICIAN
+        </div>
+
+        <Transition name="slide-fade">
+            <div class="mt-4 mb-2">
+                <v-row>
+                    <v-col cols="12" md="10">
+                        <v-text-field 
+                            v-model="searchQuery" 
+                            hide-details 
+                            variant="outlined"
+                            density="comfortable" 
+                            placeholder="Search Technicians"
+                            prepend-inner-icon="mdi-magnify"
+                            @input="filterTechnicians"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="2" style="align-self: center;">
+                        <div class="d-flex justify-end">
+                            <v-btn 
+                                style="background: rgb(4 43 76);" 
+                                @click="dialog = true"
+                            >
+                                <span style="color: white">Add Technician</span>
+                            </v-btn>
+                        </div>
+                    </v-col>
+                </v-row>
+            </div>
+        </Transition>
+
+        <v-table class="rounded-lg mt-6 modern-table">
+            <thead>
+                <tr>
+                    <th class="text-left">#</th>
+                    <th class="text-left">NAME</th>
+                    <th class="text-left">EMAIL</th>
+                    <th class="text-left">MOBILE</th>
+                    <th class="text-left">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, i) in filteredTechList" :key="item.id" class="table-row-hover">
+                    <td>{{ i + 1 }}</td>
+                    <td class="truncate">{{ item.username }}</td>
+                    <td class="truncate">{{ item.email }}</td>
+                    <td class="truncate">{{ item.mobile }}</td>
+                    <td>
+                        <v-hover v-slot="{ isHovering, props }">
+                            <v-avatar rounded size="small" v-bind="props" class="mr-1" @click="openEditDialog(item)"
+                                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="blue-darken-2"
+                                style="cursor: pointer;">
+                                <v-icon size="18" icon="mdi-pencil-outline"></v-icon>
+                            </v-avatar>
+                        </v-hover>
+                        <v-hover v-slot="{ isHovering, props }">
+                            <v-avatar rounded size="small" v-bind="props" class="mr-1" @click="openDeleteWarn(item)"
+                                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="#e9bc10"
+                                style="cursor: pointer;">
+                                <v-icon size="18" color="white" icon="mdi-trash-can-outline"></v-icon>
+                            </v-avatar>
+                        </v-hover>
+                    </td>
+                </tr>
+            </tbody>
+        </v-table>
+
+        <div v-if="techListTotalPage > 0">
+            <paginationVue :length="techListTotalPage" @chanegePage="chanegePage" />
+        </div>
+
+        <addAdminVue :visible="dialog" @close="dialog = false" @save="addTech" :title="dialog_title" />
+        <editUser :visible="edit_dialog" @close="edit_dialog = false" @save="updateTech" :title="edit_dialog_title"
+            :item="editValue" />
+        <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue"
+            @delete="deleteTech" />
+    </v-container>
+</template>
+
+<script>
+import { mapActions, mapState } from 'vuex';
+import addAdminVue from '@/components/addAdmin.vue';
+import editUser from '@/components/edituser.vue';
+import deleteWarnVue from '@/components/deleteWarn.vue';
+import paginationVue from '@/components/pagination.vue';
+
+export default {
+    name: 'technicianPage',
+    components: {
+        addAdminVue,
+        deleteWarnVue,
+        editUser,
+        paginationVue
+    },
+    data() {
+        return {
+            breadcrumbs: [
+                { text: 'Home', disabled: false, href: '/' },
+                { text: 'Technician', disabled: true, href: '/technician' },
+            ],
+            dialog: false,
+            dialog_title: 'Add Technician',
+            edit_dialog_title: 'Edit Technician',
+            edit_dialog: false,
+            delete_dialog: false,
+            deleteValue: {},
+            editValue: [],
+            editSubAdminId: '',
+            searchQuery: '',
+            filteredTechList: []
+        }
+    },
+    computed: {
+        ...mapState('technician', ['techList', 'techListTotalPage']),
+        ...mapState('subAdmin', ['editUserValue'])
+    },
+    methods: {
+        ...mapActions('technician', ['GET_TECH_LIST', 'ADD_TECH', 'DELETE_TECH', 'UPDATE_TECH']),
+        ...mapActions('subAdmin', ['GET_USER_WITH_ID']),
+
+        async addTech(payload) {
+            try {
+                await this.ADD_TECH(payload);
+                await this.GET_TECH_LIST({ size: 15 });
+                this.dialog = false;
+            } catch (error) {
+                console.error('Error adding technician:', error);
+            }
+        },
+
+        openDeleteWarn(item) {
+            this.deleteValue = item;
+            this.delete_dialog = true;
+        },
+
+        async deleteTech() {
+            try {
+                await this.DELETE_TECH(this.deleteValue.id);
+                await this.GET_TECH_LIST({ size: 15 });
+                this.delete_dialog = false;
+                this.deleteValue = {};
+            } catch (error) {
+                console.error('Error deleting technician:', error);
+            }
+        },
+
+        async openEditDialog(item) {
+            try {
+                if (!item || !item.id) {
+                    console.error('Invalid item or ID:', item);
+                    return;
+                }
+                this.editSubAdminId = item.id;
+                await this.GET_USER_WITH_ID({ id: item.id });
+                if (!this.editUserValue || (this.editUserValue.rows && this.editUserValue.rows.length === 0)) {
+                    console.warn('No valid user data found, using fallback:', item);
+                    this.editValue = { ...item };
+                } else {
+                    this.editValue = { ...this.editUserValue };
+                }
+                this.edit_dialog = true;
+            } catch (error) {
+                console.error('Error opening edit dialog:', error);
+            }
+        },
+
+        async updateTech(item) {
+            try {
+                const payload = {
+                    id: this.editSubAdminId,
+                    ...item
+                };
+                await this.UPDATE_TECH(payload);
+                await this.GET_TECH_LIST({ size: 15 });
+                this.edit_dialog = false;
+                this.editValue = [];
+                this.editSubAdminId = '';
+            } catch (error) {
+                console.error('Error updating technician:', error);
+            }
+        },
+
+        chanegePage(page) {
+            const query = {
+                page: page,
+                size: 15,
+                search: this.searchQuery || ''
+            };
+            this.GET_TECH_LIST(query).then(() => {
+                this.filterTechnicians();
+            });
+        },
+
+        filterTechnicians() {
+            if (this.searchQuery) {
+                this.filteredTechList = this.techList.filter(tech =>
+                    tech.username.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    tech.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    tech.mobile.toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            } else {
+                this.filteredTechList = [...this.techList];
+            }
+        }
+    },
+    watch: {
+        techList(newList) {
+            this.filteredTechList = [...newList];
+            this.filterTechnicians();
+        }
+    },
+    mounted() {
+        this.GET_TECH_LIST({ size: 15 }).then(() => {
+            this.filteredTechList = [...this.techList];
+        });
+    }
+}
+</script>
+
+<style scoped>
+.hmmsdashboard {
+    background: linear-gradient(135deg, #F5F7FA, #E8ECEF);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.breadcrumbs-container {
+  background: linear-gradient(90deg, #4d90fe, #285bc7);
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-breadcrumb-item {
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.custom-breadcrumb-item:hover {
+    color: #E8ECEF;
+    transform: scale(1.05);
+}
+
+.dashboard-title {
+    font-family: 'Montserrat', sans-serif;
+    color: #2A4066;
+    font-weight: 700;
+}
+
+.modern-table {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+.modern-table th {
+    background: #042B4C;
+    color: white !important;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.table-row-hover:hover {
+    background: #f5f7fa;
+}
+
+.v-table tbody tr td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: small;
+    font-weight: 500;
+}
+
+.v-table {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.truncate {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 600px) {
+    .truncate {
+        max-width: 100px;
+    }
+
+    .v-table tbody tr td {
+        padding: 8px;
+        font-size: x-small;
+    }
+
+    .v-table thead tr th {
+        padding: 8px;
+        font-size: small;
+    }
+}
+</style>
+
+<style>
+.slide-fade-enter-active {
+    transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: translateX(20px);
+    opacity: 0;
+}
+</style>
