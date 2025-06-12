@@ -244,7 +244,7 @@
     <div class="welcome-header">
       <div class="overlay"></div>
 
-      <h1 class="animated-text">Dashboard aswinllsdd</h1>
+      <h1 class="animated-text">Dashboard </h1>
 
       <p class="sub-text">Manage your services efficiently</p>
     </div>
