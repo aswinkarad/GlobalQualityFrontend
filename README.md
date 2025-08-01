@@ -1,24 +1,18 @@
-# hospital_app
+pull
+_________________________________________
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/aswinkarad/GlobalQualityFrontend.git
+git pull origin main --allow-unrelated-histories
+git fetch origin
+git reset --hard origin/main
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+_____________________________
+push 
+__________________________
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/aswinkarad/GlobalQualityFrontend.git
+git push -u origin main
