@@ -1,5 +1,6 @@
 <template>
-  <v-container class="px-4 hmmsdashboard" fluid style="min-height: 100vh; background: linear-gradient(135deg, #F5F7FA, #E8ECEF);">
+  <v-container class="px-4 hmmsdashboard" fluid
+    style="min-height: 100vh; background: linear-gradient(135deg, #F5F7FA, #E8ECEF);">
     <v-row align="center" class="top-bar">
       <v-col cols="12">
         <v-breadcrumbs :items="breadcrumbs" class="breadcrumbs-container">
@@ -19,18 +20,16 @@
       CATEGORIES
     </div>
 
-    <searchAndFilterToolbar 
-      :btn_text="cl_text" 
-      :show-button="showToolbar" 
-      @btn_action="dialog = true" 
-      class="toolbar" 
-    />
-    <addCat :visible="dialog" @close="dialog = false" @save="addCategory" :title="dialog_title" class="dialog-animation" />
+    <searchAndFilterToolbar :btn_text="cl_text" :show-button="showToolbar" @btn_action="dialog = true"
+      class="toolbar" />
+    <addCat :visible="dialog" @close="dialog = false" @save="addCategory" :title="dialog_title"
+      class="dialog-animation" />
 
     <div class="mt-8 category-cards">
       <categorycard @clickOnCard="toSubCat" :cat="categoryList" @delteItem="deleteCat" @editItem="editCat" />
     </div>
-    <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false" class="snackbar-animation" />
+    <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false"
+      class="snackbar-animation" />
   </v-container>
 </template>
 
@@ -134,10 +133,10 @@ export default {
     this.isAdmin();
     this.GET_ALL_CATEGORY();
     this.userName = JSON.parse(localStorage.getItem('user'))?.username || '';
-     if (window.innerWidth < 600) {
-    this.cl_text = null;
-    this.showToolbar = false;
-  }
+    if (window.innerWidth < 600) {
+      this.cl_text = null;
+      this.showToolbar = false;
+    }
   },
 };
 </script>
@@ -159,14 +158,19 @@ export default {
 
 .breadcrumbs-container {
   background: linear-gradient(90deg, #4d90fe, #285bc7);
-  border-radius: 12px; /* Remove rounded corners for full-width */
+  border-radius: 12px;
+  /* Remove rounded corners for full-width */
   padding: 10px 16px;
   box-shadow: 0 6px 15px rgba(77, 144, 254, 0.2);
   animation: slideInDown 0.8s ease-out;
-  width: 95%; /* Full viewport width */
-  margin-left: calc(24px); /* Offset .hmmsdashboard padding */
-  margin-right: calc(24px); /* Offset .hmmsdashboard padding */
-  box-sizing: border-box; /* Include padding in width */
+  width: 95%;
+  /* Full viewport width */
+  margin-left: calc(24px);
+  /* Offset .hmmsdashboard padding */
+  margin-right: calc(24px);
+  /* Offset .hmmsdashboard padding */
+  box-sizing: border-box;
+  /* Include padding in width */
 }
 
 .custom-breadcrumb-item {
@@ -330,40 +334,95 @@ export default {
 
 /* CSS Keyframe Animations */
 @keyframes slideInDown {
-  0% { opacity: 0; transform: translateY(-100%); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes zoomInPop {
-  0% { opacity: 0; transform: scale(0.7); }
-  60% { opacity: 1; transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes cardPopIn {
-  0% { opacity: 0; transform: scale(0.8) translateY(20px); }
-  60% { opacity: 1; transform: scale(1.03) translateY(-3px); }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.03) translateY(-3px);
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInLeft {
-  0% { opacity: 0; transform: translateX(-100px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeInUp {
-  0% { opacity: 0; transform: translateY(50px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInRight {
-  0% { opacity: 0; transform: translateX(100px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Responsive Design */
@@ -378,7 +437,8 @@ export default {
 
   .breadcrumbs-container {
     padding: 8px 12px;
-    margin-left: calc(-16px); /* Match .hmmsdashboard padding */
+    margin-left: calc(-16px);
+    /* Match .hmmsdashboard padding */
     margin-right: calc(-16px);
   }
 
@@ -421,75 +481,8 @@ export default {
   }
 }
 
-/* @media (max-width: 600px) {
-  .hmmsdashboard {
-    padding: 12px;
-  }
 
-  .category-title {
-    font-size: 1.2rem;
-  }
-
-  .breadcrumbs-container {
-    padding: 6px 10px;
-   
-    margin-right: calc(-12px);
-  }
-
-  .custom-breadcrumb-item {
-    font-size: 0.8rem;
-  }
-
-  .user-greeting {
-    font-size: 0.9rem;
-  }
-
-  .toolbar {
-    margin-top: 8px;
-  }
-
-  .category-cards {
-    margin-top: 10px;
-  }
-
-  .category-cards /deep/ .v-card {
-    padding: 8px;
-    margin-bottom: 8px;
-  }
-
-  .category-cards /deep/ .v-card-title {
-    font-size: 0.9rem;
-  }
-
-  .category-cards /deep/ .v-btn--icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .dialog-animation /deep/ .v-dialog {
-    width: 90%;
-    padding: 8px;
-  }
-
-  .dialog-animation /deep/ .v-card-title {
-    font-size: 1.1rem;
-  }
-
-  .dialog-animation /deep/ .v-text-field .v-input__control {
-    font-size: 0.8rem;
-  }
-
-  .dialog-animation /deep/ .v-btn {
-    padding: 4px 8px;
-    font-size: 0.7rem;
-  }
-
-  .snackbar-animation {
-    font-size: 0.7rem;
-    padding: 5px;
-  }
-} */
- @media (max-width: 600px) {
+@media (max-width: 600px) {
   .hmmsdashboard {
     padding: 12px;
   }
@@ -520,8 +513,9 @@ export default {
 
   .category-cards {
     margin-top: 10px;
-    /* display: flex; */
-    grid-template-columns: repeat(1, 1fr); /* Single column for better mobile stacking */
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    /* Single column for better mobile stacking */
     gap: 12px;
   }
 
@@ -564,5 +558,4 @@ export default {
     padding: 6px 10px;
   }
 }
-
 </style>

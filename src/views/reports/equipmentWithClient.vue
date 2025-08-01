@@ -101,7 +101,7 @@
         </v-table>
 
         <div v-if="saleEquipmentList.length >= 1">
-            <paginationVue :length="saleTotalPage" @chanegePage="chanegePage" />
+            <paginationVue :length="saleTotalPage" @changePage="changePage" />
         </div>
         <snackbarVue :visible="snackbar" @close="snackbar = false" :text="snacKtext" :color="snackColor" />
     </v-container>
@@ -356,7 +356,7 @@ export default {
         },
 
 
-        async chanegePage(page) {
+        async changePage(page) {
             try {
                 this.isLoading = true;
                 const query = {

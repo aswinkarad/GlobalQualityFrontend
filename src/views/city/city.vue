@@ -46,7 +46,7 @@
             </v-col>
         </v-row>
 
-        <paginationVue :length="totalPages" @chanegePage="chanegePage" />
+        <paginationVue :length="totalPages" @changePage="changePage" />
         <addCityVue :visible="dialog" @close="dialog = false" @save="AddCity" :title="dialog_title" />
         <editCity :visible="edit_dialog" @close="edit_dialog = false" @save="editCityValue" :title="edit_dialog_title"
             :name="edit_value" />
@@ -142,7 +142,7 @@ export default {
             }
         },
 
-        chanegePage(page) {
+        changePage(page) {
             const query = {
                 page: page,
                 size: 15

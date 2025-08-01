@@ -62,7 +62,7 @@
       </tbody>
     </v-table>
 
-    <paginationVue :length="equipmentTotalPage" @chanegePage="chanegePage" class="pagination" />
+    <paginationVue :length="equipmentTotalPage" @changePage="changePage" class="pagination" />
     <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false"
       class="snackbar-animation" />
     <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue"
@@ -187,7 +187,7 @@ export default {
         console.error(error);
       });
     },
-    chanegePage(page) {
+    changePage(page) {
       const params = this.$route.params;
       const payload = {
         params,

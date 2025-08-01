@@ -144,7 +144,7 @@
         </v-table>
 
         <div v-if="serviceTotalPages > 0">
-            <paginationVue :length="serviceTotalPages" @chanegePage="chanegePage" />
+            <paginationVue :length="serviceTotalPages" @changePage="changePage" />
         </div>
     </v-container>
 </template>
@@ -302,7 +302,7 @@ export default {
             }
         },
 
-        async chanegePage(page) {
+        async changePage(page) {
             const query = {
                 clientid: this.clientName || '',
                 sid: this.machineId || '',

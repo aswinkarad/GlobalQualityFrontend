@@ -138,7 +138,7 @@
             </tbody>
         </v-table>
         <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false" />
-        <paginationVue :length="serviceTotalPages" @chanegePage="chanegePage" />
+        <paginationVue :length="serviceTotalPages" @changePage="changePage" />
         <addServiceRequest :visible="dialog" @close="dialog = false" @save="addService" :title="dialog_title" />
         <EditServiceRequestVue :visible="edtDialog" @close="edtDialog = false" @save="updateService"
             :title="editDialog_title" :item="edit_value" />
@@ -665,7 +665,7 @@ export default {
            
         },
 
-        chanegePage(page) {
+        changePage(page) {
             this.fetchServiceList();
         },
         // searchSeriveRe(val) {

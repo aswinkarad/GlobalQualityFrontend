@@ -62,7 +62,7 @@
                 </tr>
             </tbody>
         </v-table>
-        <paginationVue :length="totalPages" @chanegePage="changePage" />
+        <paginationVue :length="totalPages" @changePage="changePage" />
 
         <!-- Half Screen Chat Modal -->
         <v-dialog v-model="chat_dialog" persistent class="custom-dialog-width" transition="dialog-bottom-transition">

@@ -120,7 +120,7 @@
         </v-table>
 
         <div v-if="serviceTotalPages > 0">
-            <paginationVue :length="serviceTotalPages" @chanegePage="chanegePage" />
+            <paginationVue :length="serviceTotalPages" @changePage="changePage" />
         </div>
     </v-container>
 </template>
@@ -212,7 +212,7 @@ export default {
             });
         },
 
-        chanegePage(page) {
+        changePage(page) {
             const query = {
                 statid: this.workingStatusId || '',
                 startdte: this.startDate || '',

@@ -51,7 +51,7 @@
                 </tr>
             </tbody>
         </v-table>
-        <paginationVue :length="calibrationTotalPage"  @chanegePage="chanegePage"/>
+        <paginationVue :length="calibrationTotalPage"  @changePage="changePage"/>
         <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue" :log="true" 
             @delete="update" />
    </v-container>     
@@ -88,7 +88,7 @@ export default {
          this.delete_dialog = false;
           await this.GET_CALIBRATION_LIST();
         },
-        chanegePage(page){
+        changePage(page){
             const query = {
                 page: page,
                 size: 15

@@ -84,7 +84,7 @@
         </v-table>
 
         <div v-if="adminTotalPages > 0">
-            <paginationVue :length="adminTotalPages" @chanegePage="chanegePage"/>
+            <paginationVue :length="adminTotalPages" @changePage="changePage"/>
         </div>
 
         <addAdminVue 
@@ -144,7 +144,7 @@ export default {
     methods: {
         ...mapActions('admin', ['GET_ADMIN_LIST', 'ADD_ADMIN', 'UPDATE_ADMIN', 'DELETE_ADMIN']),
 
-        chanegePage(page) {
+        changePage(page) {
             const query = {
                 page: page,
                 size: 15,

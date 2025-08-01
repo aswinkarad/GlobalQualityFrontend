@@ -85,7 +85,7 @@
         </v-table>
 
         <div v-if="techListTotalPage > 0">
-            <paginationVue :length="techListTotalPage" @chanegePage="chanegePage" />
+            <paginationVue :length="techListTotalPage" @changePage="changePage" />
         </div>
 
         <addAdminVue :visible="dialog" @close="dialog = false" @save="addTech" :title="dialog_title" />
@@ -199,7 +199,7 @@ export default {
             }
         },
 
-        chanegePage(page) {
+        changePage(page) {
             const query = {
                 page: page,
                 size: 15,

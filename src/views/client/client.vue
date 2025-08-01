@@ -99,7 +99,7 @@
                 </tr>
             </tbody>
         </v-table>
-        <paginationVue :length="clientTotalPage" @chanegePage="chanegePage" />
+        <paginationVue :length="clientTotalPage" @changePage="changePage" />
 
         <editClients :visible="edit_dialog" @close="edit_dialog = false" @save="update_client" :data="editValue"
             :title="dialog_title" />
@@ -292,7 +292,7 @@ export default {
             this.GET_CLIENT_LIST(payload);
         },
 
-        chanegePage(page) {
+        changePage(page) {
             const query = {
                 page: page,
                 size: 15,

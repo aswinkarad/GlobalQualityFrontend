@@ -36,7 +36,7 @@
       <v-table class="mt-8">
         <thead>
           <tr>
-            <th class="text-left">#</th>
+            <!-- <th class="text-left">#</th> -->
             <th class="text-left">Serial No</th>
             <th class="text-left">Equipment name</th>
             <th class="text-left">Client</th>
@@ -51,7 +51,7 @@
         </thead>
         <tbody>
           <tr v-for="item in saleEquipmentList" :key="item.id">
-            <td>{{ (page - 1) * size + i + 1 }}</td>
+            <!-- <td>{{ (page - 1) * size + i + 1 }}</td> -->
             <td>{{ item.serialNo || 'N/A' }}</td>
             <td>{{ item.equipment?.equipmentName || 'N/A' }}</td>
             <td v-if="item.client?.arabicname">{{ item.client.name + ' ' + item.client.arabicname }}</td>
@@ -535,7 +535,41 @@ export default {
       const ext = url.toLowerCase().split('.').pop();
       return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'].includes(ext);
     },
-    
+    // The handleDownload method is now redundant as `target="_blank"` on the `v-btn`'s href handles direct downloads.
+    // However, if you need to perform additional logic (e.g., track downloads, add authentication headers),
+    // you would uncomment and implement it, then call it from the @click event.
+    /*
+    async handleDownload(url) {
+      if (!url) {
+        this.mssg = 'No document URL provided for download.';
+        this.snackColor = 'error';
+        this.snackbar = true;
+        return;
+      }
+      // Example of a more complex download if needed:
+      // try {
+      //   const response = await fetch(url, { headers: { 'Authorization': 'Bearer YOUR_TOKEN' } });
+      //   if (!response.ok) throw new Error('Network response was not ok.');
+      //   const blob = await response.blob();
+      //   const downloadUrl = window.URL.createObjectURL(blob);
+      //   const link = document.createElement('a');
+      //   link.href = downloadUrl;
+      //   link.setAttribute('download', url.substring(url.lastIndexOf('/') + 1)); // Use filename from URL
+      //   document.body.appendChild(link);
+      //   link.click();
+      //   link.remove();
+      //   window.URL.revokeObjectURL(downloadUrl);
+      //   this.mssg = 'Download started successfully!';
+      //   this.snackColor = 'success';
+      //   this.snackbar = true;
+      // } catch (error) {
+      //   console.error('Download failed:', error);
+      //   this.mssg = `Download failed: ${error.message}`;
+      //   this.snackColor = 'error';
+      //   this.snackbar = true;
+      // }
+    },
+    */
     ...mapActions('city', ['GET_CITY_LIST']),
     ...mapActions('careof', ['GET_CAREOF_LIST']),
     ...mapActions('clients', ['GET_CLIENT_LIST']),
