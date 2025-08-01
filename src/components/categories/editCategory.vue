@@ -1,7 +1,7 @@
 <template>
     <div class="text-center">
         <v-dialog v-model="show" transition="dialog-top-transition" activator="parent">
-            <v-card width="400">
+            <v-card width="300">
                 <v-card-title><div class="text-h6" style="font-family: Montserrat, sans-serif !important;" >{{ title }}</div></v-card-title>
                 <v-card-text v-if="equipment">
                     <v-row>
@@ -221,4 +221,5 @@ export default {
 .v-input__prepend {
     display: none !important;
 }
+
 </style>

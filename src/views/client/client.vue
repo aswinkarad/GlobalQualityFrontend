@@ -1,6 +1,5 @@
 <template>
     <v-container class="px-4 px-md-10" fluid style="height:100vh; background:#e7f0f7;">
-        <!-- Breadcrumb Navigation -->
         <v-breadcrumbs :items="breadcrumbs" class="breadcrumbs-container">
             <template v-slot:divider>
                 <v-icon color="white">mdi-chevron-right</v-icon>
@@ -60,7 +59,6 @@
                     <th class="text-left">PHONE</th>
                     <th class="text-left d-none d-md-table-cell">CITY</th>
                     <th class="text-left d-none d-md-table-cell">CARE OF</th>
-                    <!-- <th class="text-left d-none d-md-table-cell">TYPE</th> -->
                     <th class="text-left">ACTIONS</th>
                 </tr>
             </thead>
@@ -72,7 +70,6 @@
                     <td>{{ item.contact1 }}</td>
                     <td class="d-none d-md-table-cell">{{ item.city?.city || 'N/A' }}</td>
                     <td class="d-none d-md-table-cell">{{ item.careof?.careof || 'N/A' }}</td>
-                    <!-- <td class="d-none d-md-table-cell">{{ item.clienttype?.client_type || 'N/A' }}</td> -->
                     <td>
                         <v-menu transition="scale-transition">
                             <template v-slot:activator="{ props }">
@@ -91,7 +88,7 @@
                                         <v-icon left>mdi-pencil-outline</v-icon> Edit
                                     </v-list-item-title>
                                 </v-list-item>
-                                <v-list-item @click="openDeleteDialog(item)" v-if="showToolbar">
+                                <v-list-item @click="confirmDelete(item)" v-if="showToolbar">
                                     <v-list-item-title>
                                         <v-icon left color="red">mdi-trash-can-outline</v-icon> Delete
                                     </v-list-item-title>
@@ -104,8 +101,6 @@
         </v-table>
         <paginationVue :length="clientTotalPage" @chanegePage="chanegePage" />
 
-        <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue"
-            @delete="deleteClient" />
         <editClients :visible="edit_dialog" @close="edit_dialog = false" @save="update_client" :data="editValue"
             :title="dialog_title" />
         <addClients :visible="dialog" @close="dialog = false" @save="add_client" :title="dialog_title" />
@@ -117,15 +112,16 @@ import { mapActions, mapState } from 'vuex';
 import searchAndFilterToolbar from '@/components/searchAndFilterToolbar.vue';
 import addClients from '@/components/client/addClients.vue';
 import editClients from '@/components/client/editClient.vue';
-import deleteWarnVue from '@/components/deleteWarn.vue';
+// import deleteWarnVue from '@/components/deleteWarn.vue'; // Removed as we are using SweetAlert2
 import paginationVue from '@/components/pagination.vue';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 export default {
     name: 'clientsPage',
     components: {
         searchAndFilterToolbar,
         addClients,
-        deleteWarnVue,
+        // deleteWarnVue,
         editClients,
         paginationVue
     },
@@ -138,9 +134,9 @@ export default {
             cl_text: 'Add Client',
             placeholder: 'Name',
             dialog: false,
-            delete_dialog: false,
+            // delete_dialog: false, // No longer needed
             edit_dialog: false,
-            deleteValue: {},
+            // deleteValue: {}, // No longer directly used for a component
             editValue: {},
             filterDisplay: false,
             dialog_title: 'Add Client',
@@ -150,10 +146,10 @@ export default {
             type: '',
             startDate: '',
             endDate: '',
-            // typeList: [
-            //     { id: 1, title: 'GOV' },
-            //     { id: 2, title: 'NON-GOV' },
-            // ]
+            typeList: [
+                { id: 1, title: 'GOV' },
+                { id: 2, title: 'NON-GOV' },
+            ]
         }
     },
     computed: {
@@ -182,24 +178,60 @@ export default {
                 await this.ADD_CLIENT(item);
                 await this.GET_CLIENT_LIST();
                 this.dialog = false;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Client Added!',
+                    text: 'The client has been successfully added.',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
             } catch (error) {
                 console.error('Error adding client:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to add client. Please try again.',
+                });
             }
         },
 
-        openDeleteDialog(item) {
-            this.deleteValue = item;
-            this.delete_dialog = true;
+        confirmDelete(item) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you really want to delete client "${item.name}"? This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await this.deleteClient(item.id);
+                }
+            });
         },
 
-        async deleteClient() {
+        async deleteClient(id) {
             try {
-                await this.DELETE_CLIENT(this.deleteValue.id);
+                await this.DELETE_CLIENT(id);
                 await this.GET_CLIENT_LIST();
-                this.delete_dialog = false;
-                this.deleteValue = {};
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'The client has been deleted.',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
             } catch (error) {
                 console.error("Error deleting client:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to delete client. Please try again.',
+                });
             }
         },
 
@@ -216,8 +248,21 @@ export default {
                 await this.GET_CLIENT_LIST();
                 this.edit_dialog = false;
                 this.editValue = {};
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Client Updated!',
+                    text: 'The client has been successfully updated.',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
             } catch (error) {
                 console.error('Error updating client:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to update client. Please try again.',
+                });
             }
         },
 
@@ -273,6 +318,144 @@ export default {
 }
 </script>
 
+<style scoped>
+.breadcrumbs-container {
+    background: linear-gradient(90deg, #4d90fe, #285bc7);
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 6px 15px rgba(77, 144, 254, 0.2);
+    animation: slideInDown 0.8s ease-out;
+}
+
+.custom-breadcrumb-item {
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.custom-breadcrumb-item:hover {
+    color: #E5E7EB;
+    transform: scale(1.05);
+}
+
+tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.v-table .v-table__wrapper>table>tbody>tr td {
+    border-bottom: none;
+    font-size: small;
+    font-weight: 500;
+    padding: 8px;
+}
+
+.v-table .v-table__wrapper>table>thead>tr>th {
+    border-bottom: none;
+    font-weight: 600 !important;
+    padding: 8px;
+}
+
+.v-table {
+    font-family: Montserrat, sans-serif !important;
+}
+
+@keyframes slideInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 600px) {
+    .v-container {
+        padding: 8px !important;
+    }
+
+    .breadcrumbs-container {
+        padding: 6px 10px;
+    }
+
+    .custom-breadcrumb-item {
+        font-size: 0.75rem;
+    }
+
+    .text-h6 {
+        font-size: 1rem !important;
+    }
+
+    .v-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .v-table .v-table__wrapper>table>thead>tr>th,
+    .v-table .v-table__wrapper>table>tbody>tr td {
+        font-size: 0.75rem;
+        padding: 6px;
+        min-width: 100px;
+    }
+
+    .v-btn {
+        min-width: 0;
+        padding: 0 8px;
+    }
+
+    .v-row {
+        margin: 0;
+    }
+
+    .v-col {
+        padding: 4px !important;
+    }
+}
+
+@media (max-width: 960px) {
+    .v-row {
+        flex-direction: column;
+    }
+
+    .v-col {
+        margin-bottom: 8px;
+    }
+
+    .v-table .v-table__wrapper>table>thead>tr>th,
+    .v-table .v-table__wrapper>table>tbody>tr td {
+        font-size: 0.85rem;
+    }
+
+    .breadcrumbs-container {
+        padding: 8px 12px;
+    }
+
+    .custom-breadcrumb-item {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<style>
+.slide-fade-enter-active {
+    transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: translateX(20px);
+    opacity: 0;
+}
+</style>
 <style scoped>
 .breadcrumbs-container {
     background: linear-gradient(90deg, #4d90fe, #285bc7);

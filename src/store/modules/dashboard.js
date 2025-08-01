@@ -23,7 +23,7 @@ export default {
             })
 
              commit('SET_DASHBOARD', data.data)
-             console.log(data.data)
+            //  console.log(data.data)
         },
        
     },

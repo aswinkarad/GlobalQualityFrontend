@@ -29,10 +29,10 @@ export default {
               options.params = query;
             }
             const data = await axios(options)
-            console.log(data.data.data);
+            // console.log(data.data.data);
              commit('SET_PREVENTIVE_LIST', data.data.data);
              commit('SET_PREVENTIVE_TOTAL_PAGE', data.data.totalPages)
-             console.log(data.data)
+            //  console.log(data.data)
         },
         async UPDATE_SERVICE_PREVENTIVE({ commit, state }, payload){
             const auth = JSON.parse(localStorage.getItem('user'));

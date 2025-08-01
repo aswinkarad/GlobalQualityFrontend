@@ -8,7 +8,7 @@
 
                 <v-card-text>
 
-                    <v-text-field color="#9c27b0" label="name" density="comfortable" v-model="name"
+                    <v-text-field color="#9c27b0" label="type" density="comfortable" v-model="type"
                         variant="underlined">
                     </v-text-field>
 
@@ -43,7 +43,7 @@ export default {
         title: {
             type: String
         },
-        name: {
+        type: {
             type: String
         }
 
@@ -64,7 +64,7 @@ export default {
         edit() {
 
             const payload = {
-                name: this.name,
+                type: this.type,
             }
 
             this.$emit('save', payload);

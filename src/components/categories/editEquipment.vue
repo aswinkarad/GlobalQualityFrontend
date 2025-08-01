@@ -144,7 +144,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('equipments', ['GET_STATUS_LIST']),
+        // ...mapActions('equipments', ['GET_STATUS_LIST']),
         addCat() {
             const payload = {
                 name: this.equipmentName,
@@ -161,7 +161,7 @@ export default {
         this.name = '';
         this.image = '';
         this.modelNo = '',
-        this.GET_STATUS_LIST();
+        // this.GET_STATUS_LIST();
         this.image = [];
         this.existingImage = '';
     }

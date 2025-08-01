@@ -5,11 +5,7 @@
                 <v-icon color="white">mdi-chevron-right</v-icon>
             </template>
             <template v-slot:item="{ item }">
-                <v-breadcrumbs-item 
-                    :href="item.href" 
-                    :disabled="item.disabled" 
-                    class="custom-breadcrumb-item"
-                >
+                <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="custom-breadcrumb-item">
                     {{ item.text.toUpperCase() }}
                 </v-breadcrumbs-item>
             </template>
@@ -23,36 +19,14 @@
             <div class="mt-4 mb-2 filter-container">
                 <v-row>
                     <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-if="cityList.length > 0" 
-                            v-model="city" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="cityList" 
-                            item-title="city" 
-                            clearable 
-                            item-value="id"
-                            label="City"
-                            @update:modelValue="filterClient"
-                            class="filter-input"
-                        ></v-autocomplete>
+                        <v-autocomplete v-if="cityList.length > 0" v-model="city" hide-details variant="outlined"
+                            density="comfortable" :items="cityList" item-title="city" clearable item-value="id"
+                            label="City" @update:modelValue="filterClient" class="filter-input"></v-autocomplete>
                     </v-col>
                     <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-if="careofList.length > 0" 
-                            v-model="care" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="careofList" 
-                            item-title="careof" 
-                            clearable 
-                            item-value="id"
-                            label="Care of"
-                            @update:modelValue="filterClient"
-                            class="filter-input"
-                        ></v-autocomplete>
+                        <v-autocomplete v-if="careofList.length > 0" v-model="care" hide-details variant="outlined"
+                            density="comfortable" :items="careofList" item-title="careof" clearable item-value="id"
+                            label="Care of" @update:modelValue="filterClient" class="filter-input"></v-autocomplete>
                     </v-col>
                     <!-- <v-col cols="12" md="2">
                         <v-autocomplete 
@@ -92,29 +66,28 @@
                         ></v-text-field>
                     </v-col> -->
                     <v-col cols="12" md="2" class="button-group">
-                        <v-btn 
-                            class="filter-btn" 
-                            style="background: linear-gradient(45deg, #4d90fe, #285bc7); color: white;" 
-                            @click="filterClient()"
-                        >
+                        <v-btn class="filter-btn"
+                            style="background: linear-gradient(45deg, #4d90fe, #285bc7); color: white;"
+                            @click="filterClient()">
                             Filter
                         </v-btn>
                         <v-menu open-on-hover>
                             <template v-slot:activator="{ props }">
-                                <v-btn 
-                                    v-bind="props" 
-                                    class="export-btn ml-2"
-                                    style="background: linear-gradient(45deg, #4d90fe, #285bc7); color: white;"
-                                >
+                                <v-btn v-bind="props" class="export-btn ml-2"
+                                    style="background: linear-gradient(45deg, #4d90fe, #285bc7); color: white;">
                                     Export
                                 </v-btn>
                             </template>
                             <v-list class="export-menu" style="cursor: pointer">
-                                <v-list-item>
+                                <!-- <v-list-item>
                                     <JsonCSV :data="json_data" name="clientReport.csv">
                                         <v-list-item-title>CSV</v-list-item-title>
                                     </JsonCSV>
+                                </v-list-item> -->
+                                <v-list-item @click="toCSV">
+                                    <v-list-item-title>CSV</v-list-item-title>
                                 </v-list-item>
+
                                 <v-list-item>
                                     <v-list-item-title @click="toPdf()">PDF</v-list-item-title>
                                 </v-list-item>
@@ -194,118 +167,150 @@ export default {
         ...mapActions('city', ['GET_CITY_LIST']),
         ...mapActions('careof', ['GET_CAREOF_LIST']),
         ...mapActions('clients', ['GET_CLIENT_LIST', 'GET_CLIENT_LIST_REPORT']),
-        
+
+        // toCSV() {
+        //     this.json_data = this.clientList.map(el => ({
+        //         'NAME': el.name,
+        //         'EMAIL': el.email,
+        //         'PHONE': el.contact1,
+        //         'CITY': el.city.city,
+        //         'CARE OF': el.careof.careof,
+        //         'TYPE': el.clienttype.client_type,
+        //         'CREATED DATE': el.createdAt ? el.createdAt.split('T')[0] : 'N/A',
+        //     }));
+
+        //     const headers = ['NAME', 'EMAIL', 'PHONE', 'CITY', 'CARE OF', 'TYPE', 'CREATED DATE'];
+        //     const csv = [
+        //         headers.join(','),
+        //         ...this.json_data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+        //     ].join('\n');
+
+        //     const blob = new Blob([csv], { type: 'text/csv' });
+        //     const link = document.createElement('a');
+        //     link.href = URL.createObjectURL(blob);
+        //     link.download = 'clientReport.csv';
+        //     link.click();
+        // },
         toCSV() {
-            this.json_data = this.clientList.map(el => ({
-                'NAME': el.name,
-                'EMAIL': el.email,
-                'PHONE': el.contact1,
-                'CITY': el.city.city,
-                'CARE OF': el.careof.careof,
-                'TYPE': el.clienttype.client_type,
+            const data = this.clientList.map(el => ({
+                'NAME': el.name || 'N/A',
+                'EMAIL': el.email || 'N/A',
+                'PHONE': el.contact1 || 'N/A',
+                'CITY': el.city?.city || 'N/A',
+                'CARE OF': el.careof?.careof || 'N/A',
+                'TYPE': el.clienttype?.client_type || 'N/A',
                 'CREATED DATE': el.createdAt ? el.createdAt.split('T')[0] : 'N/A',
             }));
-            
-            const headers = ['NAME', 'EMAIL', 'PHONE', 'CITY', 'CARE OF', 'TYPE', 'CREATED DATE'];
-            const csv = [
+
+            if (data.length === 0) {
+                alert('No data available to export.');
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const csvContent = [
                 headers.join(','),
-                ...this.json_data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+                ...data.map(row => headers.map(h => `"${row[h]}"`).join(','))
             ].join('\n');
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'clientReport.csv';
+            link.setAttribute('download', 'clientReport.csv');
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         },
-        
-  async toPdf() {
-    try {
-        const payload = {
-            cty: this.city || '',
-            typ: this.type || '',
-            creof: this.care || '',
-            startDate: this.startDate || '',
-            endDate: this.endDate || '',
-            size: 9999999
-        };
 
-        // Fetch data and log response
-        await this.GET_CLIENT_LIST_REPORT(payload);
-        console.log('clientListReport:', this.clientListReport);
 
-        // Validate clientListReport
-        if (!this.clientListReport || !Array.isArray(this.clientListReport) || this.clientListReport.length === 0) {
-            console.error('No data available in clientListReport');
-            alert('No data available to generate PDF.');
-            return;
-        }
 
-        // Initialize jsPDF with explicit configuration
-        const doc = new jsPDF('p', 'mm', 'a4');
-        const columns = [
-            { header: "Client Name", dataKey: "cName" },
-            { header: "Email", dataKey: "email" },
-            { header: "Phone", dataKey: "phone" },
-            { header: "Created Date", dataKey: "createdAt" }
-        ];
+        async toPdf() {
+            try {
+                const payload = {
+                    cty: this.city || '',
+                    typ: this.type || '',
+                    creof: this.care || '',
+                    startDate: this.startDate || '',
+                    endDate: this.endDate || '',
+                    size: 9999999
+                };
 
-        // Map data with robust error handling
-        const body = this.clientListReport.map(el => ({
-            cName: el?.name || 'N/A',
-            email: el?.email || 'N/A',
-            phone: el?.contact1 || 'N/A',
-            createdAt: el?.createdAt ? el.createdAt.split('T')[0] : 'N/A',
-            city: el?.city?.city || 'N/A',
-            careof: el?.careof?.careof || 'N/A',
-            type: el?.clienttype?.client_type || 'N/A'
-        }));
+                // Fetch data and log response
+                await this.GET_CLIENT_LIST_REPORT(payload);
+                console.log('clientListReport:', this.clientListReport);
 
-        // Dynamically add columns with safety checks
-        if (!this.city) {
-            columns.splice(3, 0, { header: "City", dataKey: "city" });
-        }
-        if (!this.care) {
-            columns.splice(this.city ? 4 : 3, 0, { header: "Care Of", dataKey: "careof" });
-        }
-        if (!this.type) {
-            const index = this.city && this.care ? 5 : (this.city || this.care ? 4 : 3);
-            columns.splice(index, 0, { header: "Type", dataKey: "type" });
-        }
+                // Validate clientListReport
+                if (!this.clientListReport || !Array.isArray(this.clientListReport) || this.clientListReport.length === 0) {
+                    console.error('No data available in clientListReport');
+                    alert('No data available to generate PDF.');
+                    return;
+                }
 
-        // Add title and line
-        doc.setFontSize(20);
-        doc.text("CLIENT REPORT", 105, 20, { align: 'center' });
-        doc.setLineWidth(0.5);
-        doc.line(15, 25, 195, 25);
+                // Initialize jsPDF with explicit configuration
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const columns = [
+                    { header: "Client Name", dataKey: "cName" },
+                    { header: "Email", dataKey: "email" },
+                    { header: "Phone", dataKey: "phone" },
+                    { header: "Created Date", dataKey: "createdAt" }
+                ];
 
-        // Add filter information with safety checks
-        doc.setFontSize(10);
-        let yPos = 35;
-        doc.text(`City: ${this.city ? this.cityList?.find(c => c.id === this.city)?.city || 'All' : 'All'}`, 15, yPos);
-        yPos += 7;
-        doc.text(`Care of: ${this.care ? this.careofList?.find(c => c.id === this.care)?.careof || 'All' : 'All'}`, 15, yPos);
-        yPos += 7;
-        doc.text(`Type: ${this.type ? this.typeList?.find(t => t.id === this.type)?.title || 'All' : 'All'}`, 15, yPos);
-        yPos += 7;
-        doc.text(`Date Range: ${this.startDate && this.endDate ? `${this.startDate} ~ ${this.endDate}` : 'All'}`, 15, yPos);
+                // Map data with robust error handling
+                const body = this.clientListReport.map(el => ({
+                    cName: el?.name || 'N/A',
+                    email: el?.email || 'N/A',
+                    phone: el?.contact1 || 'N/A',
+                    createdAt: el?.createdAt ? el.createdAt.split('T')[0] : 'N/A',
+                    city: el?.city?.city || 'N/A',
+                    careof: el?.careof?.careof || 'N/A',
+                    type: el?.clienttype?.client_type || 'N/A'
+                }));
 
-        // Generate table
-        autoTable(doc, {
-            startY: yPos + 10,
-            head: [columns.map(col => col.header)],
-            body: body.map(row => columns.map(col => row[col.dataKey])),
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [77, 144, 254], textColor: [255, 255, 255] },
-            margin: { left: 15, right: 15 }
-        });
+                // Dynamically add columns with safety checks
+                if (!this.city) {
+                    columns.splice(3, 0, { header: "City", dataKey: "city" });
+                }
+                if (!this.care) {
+                    columns.splice(this.city ? 4 : 3, 0, { header: "Care Of", dataKey: "careof" });
+                }
+                if (!this.type) {
+                    const index = this.city && this.care ? 5 : (this.city || this.care ? 4 : 3);
+                    columns.splice(index, 0, { header: "Type", dataKey: "type" });
+                }
 
-        doc.save('ClientReport.pdf');
-    } catch (error) {
-        console.error('PDF generation failed:', error);
-        alert('Failed to generate PDF. Check console for details.');
-    }
-},
+                // Add title and line
+                doc.setFontSize(20);
+                doc.text("CLIENT REPORT", 105, 20, { align: 'center' });
+                doc.setLineWidth(0.5);
+                doc.line(15, 25, 195, 25);
+
+                // Add filter information with safety checks
+                doc.setFontSize(10);
+                let yPos = 35;
+                doc.text(`City: ${this.city ? this.cityList?.find(c => c.id === this.city)?.city || 'All' : 'All'}`, 15, yPos);
+                yPos += 7;
+                doc.text(`Care of: ${this.care ? this.careofList?.find(c => c.id === this.care)?.careof || 'All' : 'All'}`, 15, yPos);
+                yPos += 7;
+                doc.text(`Type: ${this.type ? this.typeList?.find(t => t.id === this.type)?.title || 'All' : 'All'}`, 15, yPos);
+                yPos += 7;
+                doc.text(`Date Range: ${this.startDate && this.endDate ? `${this.startDate} ~ ${this.endDate}` : 'All'}`, 15, yPos);
+
+                // Generate table
+                autoTable(doc, {
+                    startY: yPos + 10,
+                    head: [columns.map(col => col.header)],
+                    body: body.map(row => columns.map(col => row[col.dataKey])),
+                    styles: { fontSize: 10, cellPadding: 3 },
+                    headStyles: { fillColor: [77, 144, 254], textColor: [255, 255, 255] },
+                    margin: { left: 15, right: 15 }
+                });
+
+                doc.save('ClientReport.pdf');
+            } catch (error) {
+                console.error('PDF generation failed:', error);
+                alert('Failed to generate PDF. Check console for details.');
+            }
+        },
         filterClient() {
             const payload = {
                 cty: this.city || '',
@@ -318,7 +323,7 @@ export default {
             };
             this.GET_CLIENT_LIST(payload);
         },
-        
+
         changePage(page) {
             const query = {
                 page: page,
@@ -417,14 +422,16 @@ export default {
     height: 100%;
 }
 
-.filter-btn, .export-btn {
+.filter-btn,
+.export-btn {
     border-radius: 6px;
     transition: all 0.3s ease;
     text-transform: none;
     font-weight: 600;
 }
 
-.filter-btn:hover, .export-btn:hover {
+.filter-btn:hover,
+.export-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(77, 144, 254, 0.3);
 }
@@ -432,7 +439,7 @@ export default {
 /* Export Menu */
 .export-menu {
     background: #285bc7;
-    color:#4d90fe;
+    color: #4d90fe;
     border-radius: 6px;
 }
 
@@ -475,23 +482,49 @@ export default {
 
 /* CSS Keyframe Animations */
 @keyframes slideInDown {
-    0% { opacity: 0; transform: translateY(-100%); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideInLeft {
-    0% { opacity: 0; transform: translateX(-100px); }
-    100% { opacity: 1; transform: translateX(0); }
+    0% {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(50px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Responsive Design */
@@ -523,7 +556,8 @@ export default {
         white-space: nowrap;
     }
 
-    .modern-table th, .modern-table td {
+    .modern-table th,
+    .modern-table td {
         padding: 10px 6px;
         font-size: 0.8rem;
     }
@@ -554,7 +588,8 @@ export default {
         padding: 10px;
     }
 
-    .filter-btn, .export-btn {
+    .filter-btn,
+    .export-btn {
         font-size: 0.8rem;
         padding: 6px 12px;
     }
@@ -563,7 +598,8 @@ export default {
         margin-top: 10px;
     }
 
-    .modern-table th, .modern-table td {
+    .modern-table th,
+    .modern-table td {
         padding: 8px 4px;
         font-size: 0.7rem;
     }
@@ -588,5 +624,4 @@ export default {
     transform: translateX(20px);
     opacity: 0;
 }
-
 </style>

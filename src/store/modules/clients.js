@@ -104,25 +104,26 @@ export default {
                 throw error; // Re-throw the error to handle it in the component
             }
         },
-        async DELETE_CLIENT({ commit }, payload){
-            // console.log(payload)
-            try {
-                const auth = JSON.parse(localStorage.getItem('user'));
-                const deleteclient = await axios({
-                    method:'get',
-                    url :`${process.env.VUE_APP_BASE_URL}clients/delete_client/${ payload.id }`,
-                
-                    headers: {
-                        Authorization: 'Bearer ' + auth.access_token
-                    }
-    
-                })
-                // console.log(deleteclient)
+  async DELETE_CLIENT({ commit }, clientId){ // Changed 'payload' to 'clientId'
+        console.log("Vuex DELETE_CLIENT action received ID:", clientId); // Add this for verification
+        try {
+            const auth = JSON.parse(localStorage.getItem('user'));
+            const deleteclient = await axios({
+                method:'delete', // **IMPORTANT: Changed method from 'get' to 'delete'**
+                url :`${process.env.VUE_APP_BASE_URL}clients/delete_client/${ clientId }`, // Use clientId directly
+                headers: {
+                    Authorization: 'Bearer ' + auth.access_token
+                }
+            });
+            console.log("Client deleted successfully:", deleteclient); // Confirm success
+            // You might want to commit a mutation here to remove the client from state
+            // commit('REMOVE_CLIENT_FROM_LIST', clientId);
 
-            } catch (error) {
-                console.log(error)
-            }
-        } ,
+        } catch (error) {
+            console.error("Error in DELETE_CLIENT action:", error.response ? error.response.data : error.message); // Log full error
+            throw error; // Re-throw the error so the component can catch it
+        }
+    },
         async GET_CLIENT_BY_ID({ commit, state }, payload){
              console.log(payload)
             try {

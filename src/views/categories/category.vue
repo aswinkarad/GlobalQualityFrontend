@@ -134,6 +134,10 @@ export default {
     this.isAdmin();
     this.GET_ALL_CATEGORY();
     this.userName = JSON.parse(localStorage.getItem('user'))?.username || '';
+     if (window.innerWidth < 600) {
+    this.cl_text = null;
+    this.showToolbar = false;
+  }
   },
 };
 </script>
@@ -417,7 +421,7 @@ export default {
   }
 }
 
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .hmmsdashboard {
     padding: 12px;
   }
@@ -428,7 +432,7 @@ export default {
 
   .breadcrumbs-container {
     padding: 6px 10px;
-    margin-left: calc(-12px); /* Match .hmmsdashboard padding */
+   
     margin-right: calc(-12px);
   }
 
@@ -484,5 +488,81 @@ export default {
     font-size: 0.7rem;
     padding: 5px;
   }
+} */
+ @media (max-width: 600px) {
+  .hmmsdashboard {
+    padding: 12px;
+  }
+
+  .category-title {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .breadcrumbs-container {
+    padding: 6px 10px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 0.8rem;
+  }
+
+  .custom-breadcrumb-item {
+    font-size: 0.8rem;
+    text-align: left;
+  }
+
+  .toolbar {
+    margin-top: 10px;
+  }
+
+  .category-cards {
+    margin-top: 10px;
+    /* display: flex; */
+    grid-template-columns: repeat(1, 1fr); /* Single column for better mobile stacking */
+    gap: 12px;
+  }
+
+  .category-cards /deep/ .v-card {
+    padding: 10px;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+
+  .category-cards /deep/ .v-card-title {
+    font-size: 1rem;
+  }
+
+  .category-cards /deep/ .v-btn--icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .dialog-animation /deep/ .v-dialog {
+    width: 90%;
+    padding: 10px;
+  }
+
+  .dialog-animation /deep/ .v-card-title {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .dialog-animation /deep/ .v-text-field .v-input__control {
+    font-size: 0.9rem;
+  }
+
+  .dialog-animation /deep/ .v-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .snackbar-animation {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+  }
 }
+
 </style>

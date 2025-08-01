@@ -23,6 +23,7 @@ import status from './modules/services/status';
 import servicetype from './modules/servicetype';
 import message from './modules/services/message';
 import notifications from './modules/notifications';
+import RequestType from './modules/services/RequestType';
 
 export default createStore({
   namespaced: true,
@@ -56,6 +57,7 @@ export default createStore({
     priority,
     status,
     servicetype,
-    message
+    message,
+    RequestType
   }
 })

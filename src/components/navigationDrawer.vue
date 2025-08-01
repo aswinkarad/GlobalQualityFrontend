@@ -1,34 +1,16 @@
 <template>
   <div class="app-layout">
-    <v-navigation-drawer 
-      v-if="isSidebarOpen" 
-      permanent 
-      theme="dark" 
-      class="modern-sidebar"
-      :width="280"
-    >
+    <v-navigation-drawer v-if="isSidebarOpen" permanent theme="dark" class="modern-sidebar" :width="280">
       <v-list-item height="80" class="sidebar-header">
-        <v-img 
-          :src="logoSrc" 
-          height="40"
-          width="150"
-          contain
-          class="logo"
-          @error="onLogoError"
-        ></v-img>
+        <v-img :src="logoSrc" height="40" width="150" contain class="logo" @error="onLogoError"></v-img>
         <v-spacer></v-spacer>
         <v-btn variant="text" icon="mdi-chevron-left" @click="toggleSidebar" class="toggle-btn"></v-btn>
       </v-list-item>
-      
+
       <div class="user-profile">
         <div class="avatar-container">
           <v-avatar size="60" class="profile-avatar">
-            <v-img 
-              :src="userAvatar" 
-              alt="User Avatar"
-              class="avatar-image"
-              @error="onAvatarError"
-            ></v-img>
+            <v-img :src="userAvatar" alt="User Avatar" class="avatar-image" @error="onAvatarError"></v-img>
           </v-avatar>
         </div>
         <div class="user-info">
@@ -36,51 +18,29 @@
           <div class="user-role">{{ userRole }}</div>
         </div>
       </div>
-      
+
       <v-divider class="sidebar-divider"></v-divider>
-      
+
       <v-list density="default" nav class="sidebar-list">
         <!-- Menu Items -->
-        <v-list-item 
-          v-for="item in menuItems" 
-          :key="item.title" 
-          :to="item.to" 
-          :prepend-icon="item.icon" 
-          :title="item.title"
-          :value="item.value" 
-          class="sidebar-item" 
-          :class="{ 'active-item': $route.name === item.to.name }"
-        >
+        <v-list-item v-for="item in menuItems" :key="item.title" :to="item.to" :prepend-icon="item.icon"
+          :title="item.title" :value="item.value" class="sidebar-item"
+          :class="{ 'active-item': $route.name === item.to.name }">
           <template v-slot:append>
             <div class="item-indicator" v-if="$route.name === item.to.name"></div>
           </template>
         </v-list-item>
 
         <!-- Menu Groups -->
-        <v-list-group 
-          v-for="group in visibleMenuGroups" 
-          :key="group.title" 
-          class="sidebar-group"
-          :value="isGroupActive(group)"
-        >
+        <v-list-group v-for="group in visibleMenuGroups" :key="group.title" class="sidebar-group"
+          :value="isGroupActive(group)">
           <template v-slot:activator="{ props }">
-            <v-list-item 
-              v-bind="props" 
-              :prepend-icon="group.icon" 
-              :title="group.title" 
-              :value="group.value"
-              class="sidebar-group-header"
-            ></v-list-item>
+            <v-list-item v-bind="props" :prepend-icon="group.icon" :title="group.title" :value="group.value"
+              class="sidebar-group-header"></v-list-item>
           </template>
-          <v-list-item 
-            v-for="subItem in group.items" 
-            :key="subItem.title" 
-            :to="subItem.to" 
-            :title="subItem.title"
-            :value="subItem.value" 
-            class="sidebar-subitem"
-            :class="{ 'active-subitem': $route.name === subItem.to.name }"
-          >
+          <v-list-item v-for="subItem in group.items" :key="subItem.title" :to="subItem.to" :title="subItem.title"
+            :value="subItem.value" class="sidebar-subitem"
+            :class="{ 'active-subitem': $route.name === subItem.to.name }">
             <template v-slot:prepend>
               <v-icon size="18" class="subitem-icon">mdi-circle-small</v-icon>
             </template>
@@ -90,7 +50,7 @@
           </v-list-item>
         </v-list-group>
       </v-list>
-      
+
       <div class="logout-container">
         <v-divider class="sidebar-divider"></v-divider>
         <v-list-item prepend-icon="mdi-logout" title="Log Out" value="logout" @click="logoutWarn" class="logout-item">
@@ -104,19 +64,9 @@
     <!-- Main content area -->
     <v-container fluid class="pa-0 content-container">
       <!-- Toggle button when sidebar is closed -->
-      <v-btn 
-        v-if="!isSidebarOpen" 
-        icon="mdi-menu" 
-        @click="toggleSidebar" 
-        class="floating-toggle-btn"
-      ></v-btn>
-      <deleteWarnVue 
-        :visible="log_dialog" 
-        @close="log_dialog = false" 
-        :item="deleteValue" 
-        @delete="logOut" 
-        :log="true" 
-      />
+      <v-btn v-if="!isSidebarOpen" icon="mdi-menu" @click="toggleSidebar" class="floating-toggle-btn"></v-btn>
+      <deleteWarnVue :visible="log_dialog" @close="log_dialog = false" :item="deleteValue" @delete="logOut"
+        :log="true" />
       <div class="page-content">
         <router-view />
       </div>
@@ -175,6 +125,10 @@ export default {
         items: [
           { title: 'City', to: { name: 'cityPage' }, value: 'city' },
           { title: 'Care Of', to: { name: 'careOfPage' }, value: 'careOff' },
+          { title: 'Service Request Type', to: { name: 'ServiceRequest_Type' }, value: 'ServiceRequest_Type' },
+          { title: 'Request Type', to: { name: 'RequestType' }, value: 'RequestType' },
+          { title: 'User Activity', to: { name: 'UserLog' }, value: 'UserLog' },
+
         ],
         visible: () => JSON.parse(localStorage.getItem('user'))?.role[0] !== 'Engineer',
       },
@@ -391,7 +345,8 @@ export default {
   background: rgba(59, 130, 246, 0.6);
 }
 
-.sidebar-item, .sidebar-group-header {
+.sidebar-item,
+.sidebar-group-header {
   border-radius: 12px;
   margin-bottom: 6px;
   color: #e0f2fe !important;
@@ -401,7 +356,8 @@ export default {
   background: transparent;
 }
 
-.sidebar-item:hover, .sidebar-group-header:hover {
+.sidebar-item:hover,
+.sidebar-group-header:hover {
   background: rgba(59, 130, 246, 0.2) !important;
   transform: translateX(8px);
   box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
@@ -530,19 +486,39 @@ export default {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-  from { transform: translateX(-20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes glow {
-  0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); }
-  100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); }
+  0% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
 }
 
 /* Mobile Responsiveness */
@@ -550,21 +526,21 @@ export default {
   .modern-sidebar {
     width: 240px !important;
   }
-  
+
   .sidebar-header {
     height: 70px !important;
   }
-  
+
   .user-profile {
     padding: 16px;
     margin: 0 8px;
   }
-  
+
   .profile-avatar {
     width: 50px !important;
     height: 50px !important;
   }
-  
+
   .sidebar-list {
     max-height: calc(100vh - 230px);
   }
@@ -576,26 +552,26 @@ export default {
     position: fixed !important;
     z-index: 999;
   }
-  
+
   .floating-toggle-btn {
     width: 45px;
     height: 45px;
     top: 15px;
     left: 15px;
   }
-  
+
   .page-content {
     padding: 16px;
   }
-  
+
   .user-profile {
     padding: 12px;
   }
-  
+
   .user-name {
     font-size: 14px;
   }
-  
+
   .user-role {
     font-size: 12px;
   }

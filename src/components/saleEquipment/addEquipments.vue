@@ -1,13 +1,7 @@
 <template>
   <div class="text-center">
-    <v-dialog
-      v-model="show"
-      transition="dialog-top-transition"
-      activator="parent"
-      :max-width="isMobile ? '100%' : '900'"
-      :fullscreen="isMobile"
-      scrollable
-    >
+    <v-dialog v-model="show" transition="dialog-top-transition" activator="parent"
+      :max-width="isMobile ? '100%' : '900'" :fullscreen="isMobile" scrollable>
       <v-card class="dialog-card elevation-5">
         <v-card-title class="dialog-title">
           {{ title }}
@@ -21,283 +15,89 @@
           <v-container fluid>
             <v-row dense>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-autocomplete
-                  color="#7b1fa2"
-                  variant="outlined"
-                  density="compact"
-                  v-model:search="search"
-                  v-model="selcetdClient"
-                  clearable
-                  :items="clientList"
-                  item-title="name"
-                  item-value="id"
-                  label="Client"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-account"
-                ></v-autocomplete>
-                <span v-if="v$.selcetdClient.$error" class="error-text">
-                  Client is required
-                </span>
+                <v-autocomplete color="#7b1fa2" variant="outlined" density="compact" v-model:search="search"
+                  v-model="selcetdClient" clearable :items="clientList" item-title="name" item-value="id" label="Client"
+                  class="custom-field"></v-autocomplete>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-autocomplete
-                  color="#7b1fa2"
-                  variant="outlined"
-                  density="compact"
-                  v-model="selcetdCategory"
-                  clearable
-                  :items="categoryList"
-                  item-title="categoryName"
-                  item-value="id"
-                  label="Category"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-shape"
-                ></v-autocomplete>
+                <v-autocomplete color="#7b1fa2" variant="outlined" density="compact" v-model="selcetdCategory" clearable
+                  :items="categoryList" item-title="categoryName" item-value="id" label="Category"
+                  class="custom-field"></v-autocomplete>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-autocomplete
-                  color="#7b1fa2"
-                  variant="outlined"
-                  density="compact"
-                  v-model="selcetdSubCategory"
-                  clearable
-                  :items="availSubCatList"
-                  item-title="subcategoryName"
-                  item-value="id"
-                  label="Sub Category"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-shape-outline"
-                  @click="getSubcatList"
-                ></v-autocomplete>
+                <v-autocomplete color="#7b1fa2" variant="outlined" density="compact" v-model="selcetdSubCategory"
+                  clearable :items="availSubCatList" item-title="subcategoryName" item-value="id" label="Sub Category"
+                  class="custom-field"></v-autocomplete>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-autocomplete
-                  color="#7b1fa2"
-                  variant="outlined"
-                  density="compact"
-                  v-model="selcetedEquipment"
-                  clearable
-                  :items="availableEquilist"
-                  item-title="equipmentName"
-                  item-value="id"
-                  label="Equipment"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-tools"
-                  @click="getEquiList"
-                ></v-autocomplete>
-                <span v-if="v$.selcetedEquipment.$error" class="error-text">
-                  Equipment is required
-                </span>
+                <v-autocomplete color="#7b1fa2" variant="outlined" density="compact" v-model="selcetedEquipment"
+                  clearable :items="availableEquilist" item-title="equipmentName" item-value="id" label="Equipment"
+                  class="custom-field"></v-autocomplete>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-text-field
-                  color="#7b1fa2"
-                  label="Maintenance Period"
-                  density="compact"
-                  v-model="MaintenancePeriod"
-                  variant="outlined"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-calendar-clock"
-                ></v-text-field>
-                <span v-if="v$.MaintenancePeriod.$error" class="error-text">
-                  {{ v$.MaintenancePeriod.$errors[0].$message }}
-                </span>
+                <v-text-field color="#7b1fa2" label="Maintenance Period" density="compact" v-model="MaintenancePeriod"
+                  variant="outlined" class="custom-field" type="number" min="0"></v-text-field>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-text-field
-                  color="#7b1fa2"
-                  label="Serial No"
-                  density="compact"
-                  v-model="serialNo"
-                  variant="outlined"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-barcode"
-                ></v-text-field>
-                <span v-if="v$.serialNo.$error" class="error-text">
-                  Serial No is required
-                </span>
+                <v-text-field color="#7b1fa2" label="Serial No" density="compact" v-model="serialNo" variant="outlined"
+                  class="custom-field"></v-text-field>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-text-field
-                  color="#7b1fa2"
-                  label="Installation Date"
-                  type="date"
-                  density="compact"
-                  v-model="InstallationDate"
-                  variant="outlined"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-calendar-start"
-                ></v-text-field>
-                <span v-if="v$.InstallationDate.$error" class="error-text">
-                  Installation Date is required
-                </span>
+                <v-text-field color="#7b1fa2" label="Installation Date" type="date" density="compact"
+                  v-model="InstallationDate" variant="outlined" class="custom-field"></v-text-field>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-text-field
-                  color="#7b1fa2"
-                  label="Last Maintenance Date"
-                  type="date"
-                  density="compact"
-                  v-model="lastMainDate"
-                  variant="outlined"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-calendar-check"
-                ></v-text-field>
-                <span v-if="v$.lastMainDate.$error" class="error-text">
-                  Last Maintenance Date is required
-                </span>
+                <v-text-field color="#7b1fa2" label="Last Maintenance Date" type="date" density="compact"
+                  v-model="lastMainDate" variant="outlined" class="custom-field"></v-text-field>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-text-field
-                  color="#7b1fa2"
-                  label="Warranty Expiry Date"
-                  type="date"
-                  density="compact"
-                  v-model="WarrantyDate"
-                  variant="outlined"
-                  class="custom-field"
-                  prepend-inner-icon="mdi-calendar-end"
-                ></v-text-field>
-                <span v-if="v$.WarrantyDate.$error" class="error-text">
-                  Warranty Expiry Date is required
-                </span>
+                <v-text-field color="#7b1fa2" label="Warranty Expiry Date" type="date" density="compact"
+                  v-model="WarrantyDate" variant="outlined" class="custom-field"></v-text-field>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-file-input
-                  color="#7b1fa2"
-                  prepend-inner-icon="mdi-file-pdf-box"
-                  density="compact"
-                  clearable
-                  variant="outlined"
-                  v-model="invoice"
-                  show-size
-                  label="Invoice"
-                  class="custom-field"
-                  multiple="false"
-                  accept=".pdf,.jpg,.png"
-                ></v-file-input>
-                <span v-if="v$.invoice.$error" class="error-text">
-                  Invoice is required
-                </span>
+                <v-file-input color="#7b1fa2" density="compact" clearable variant="outlined" v-model="invoice" show-size
+                  label="Invoice" class="custom-field" accept=".pdf,.jpg,.png"></v-file-input>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-file-input
-                  color="#7b1fa2"
-                  prepend-inner-icon="mdi-file-pdf-box"
-                  density="compact"
-                  clearable
-                  variant="outlined"
-                  v-model="amc"
-                  show-size
-                  label="AMC Document"
-                  class="custom-field"
-                  multiple="false"
-                  accept=".pdf,.jpg,.png"
-                ></v-file-input>
+                <v-file-input color="#7b1fa2" density="compact" clearable variant="outlined" v-model="amc" show-size
+                  label="AMC Document" class="custom-field" accept=".pdf,.jpg,.png"></v-file-input>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-file-input
-                  color="#7b1fa2"
-                  prepend-inner-icon="mdi-file-pdf-box"
-                  density="compact"
-                  clearable
-                  variant="outlined"
-                  v-model="installationReport"
-                  show-size
-                  label="Installation Report"
-                  class="custom-field"
-                  multiple="false"
-                  accept=".pdf,.jpg,.png"
-                ></v-file-input>
-                <span v-if="v$.installationReport.$error" class="error-text">
-                  Installation Report is required
-                </span>
+                <v-file-input color="#7b1fa2" density="compact" clearable variant="outlined"
+                  v-model="installationReport" show-size label="Installation Report" class="custom-field"
+                  accept=".pdf,.jpg,.png"></v-file-input>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-file-input
-                  color="#7b1fa2"
-                  prepend-inner-icon="mdi-file-pdf-box"
-                  density="compact"
-                  clearable
-                  variant="outlined"
-                  v-model="warranty"
-                  show-size
-                  label="Warranty Document"
-                  class="custom-field"
-                  multiple="false"
-                  accept=".pdf,.jpg,.png"
-                ></v-file-input>
-                <span v-if="v$.warranty.$error" class="error-text">
-                  Warranty Document is required
-                </span>
+                <v-file-input color="#7b1fa2" density="compact" clearable variant="outlined" v-model="warranty"
+                  show-size label="Warranty Document" class="custom-field" accept=".pdf,.jpg,.png"></v-file-input>
               </v-col>
               <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-file-input
-                  color="#7b1fa2"
-                  prepend-inner-icon="mdi-file-pdf-box"
-                  density="compact"
-                  clearable
-                  variant="outlined"
-                  v-model="maintenance"
-                  show-size
-                  label="Maintenance Contract"
-                  class="custom-field"
-                  multiple="false"
-                  accept=".pdf,.jpg,.png"
-                ></v-file-input>
+                <v-file-input color="#7b1fa2" density="compact" clearable variant="outlined" v-model="maintenance"
+                  show-size label="Maintenance Contract" class="custom-field" accept=".pdf,.jpg,.png"></v-file-input>
               </v-col>
-              <!-- Dynamic Document Fields -->
+
               <v-col cols="12">
                 <v-label class="mb-2">Additional Documents (up to 10)</v-label>
-                <v-row
-                  v-for="(doc, index) in documentFields"
-                  :key="index"
-                  dense
-                  class="align-center"
-                >
+                <v-row v-for="(doc, index) in allDocumentFields" :key="doc.id || `doc-${index}`" dense
+                  class="align-center">
                   <v-col cols="12" :sm="isMobile ? 12 : 5">
-                    <v-file-input
-                      color="#7b1fa2"
-                      prepend-inner-icon="mdi-file-pdf-box"
-                      density="compact"
-                      clearable
-                      variant="outlined"
-                      v-model="doc.file"
-                      show-size
-                      :label="`Document ${index + 1}`"
-                      class="custom-field"
-                      accept=".pdf,.jpg,.png"
-                    ></v-file-input>
+                    <v-file-input color="#7b1fa2" prepend-inner-icon="mdi-file-pdf-box" density="compact" clearable
+                      variant="outlined" v-model="doc.file" show-size :label="`Document ${index + 1}`"
+                      class="custom-field" accept=".pdf,.jpg,.png"></v-file-input>
                   </v-col>
                   <v-col cols="12" :sm="isMobile ? 12 : 5">
-                    <v-text-field
-                      color="#7b1fa2"
-                      :label="`Document ${index + 1} Name`"
-                      density="compact"
-                      v-model="doc.typeName"
-                      variant="outlined"
-                      class="custom-field"
-                      prepend-inner-icon="mdi-file-document-outline"
-                      :placeholder="`Document ${index + 1}`"
-                    ></v-text-field>
+                    <v-text-field :label="`Document ${index + 1} Name`" density="compact" v-model="doc.typeName"
+                      variant="outlined" class="custom-field" prepend-inner-icon="mdi-file-text-outline"
+                      :placeholder="`Document ${index + 1}`"></v-text-field>
                   </v-col>
                   <v-col cols="12" :sm="isMobile ? 12 : 2">
-                    <v-btn
-                      icon
-                      color="red"
-                      @click="removeDocument(index)"
-                      :disabled="documentFields.length === 1"
-                    >
-                      <v-icon>mdi-delete</v-icon>
+                    <v-btn icon @click="removeAdditionalDocument(index, doc.isExisting)"
+                      :disabled="allDocumentFields.length === 1 && !editMode">
+                      <v-icon background-color="white" color="red">mdi-delete</v-icon>
                     </v-btn>
                   </v-col>
                 </v-row>
-                <v-btn
-                  color="#7b1fa2"
-                  class="mt-2"
-                  :disabled="documentFields.length >= 10"
-                  @click="addDocumentField"
-                >
+                <v-btn class="mt-2" :disabled="allDocumentFields.length >= 10" @click="addAdditionalDocumentField">
                   <v-icon left>mdi-plus</v-icon>
                   Add Document
                 </v-btn>
@@ -312,19 +112,13 @@
           <v-btn class="action-btn cancel-btn" @click="show = false">
             Cancel
           </v-btn>
-          <v-btn class="action-btn save-btn" @click="addSale">
+          <v-btn class="action-btn save-btn" @click="saveSale">
             Save
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- Snackbar for Error Messages -->
-    <v-snackbar
-      v-model="snackbar"
-      :color="snackbarColor"
-      :timeout="5000"
-      top
-    >
+    <v-snackbar v-model="snackbar" :color="snackbarColor" :timeout="5000" top>
       {{ snackbarMessage }}
       <template v-slot:action="{ attrs }">
         <v-btn text v-bind="attrs" @click="snackbar = false">Close</v-btn>
@@ -334,16 +128,21 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core';
-import { required, numeric } from '@vuelidate/validators';
 import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'AddEquipment',
-  setup() {
-    return {
-      v$: useVuelidate(),
-    };
+  props: {
+    visible: {
+      type: Boolean,
+    },
+    title: {
+      type: String,
+    },
+    saleId: {
+      type: [Number, String],
+      default: null,
+    },
   },
   data() {
     return {
@@ -359,7 +158,12 @@ export default {
       installationReport: [],
       warranty: [],
       maintenance: [],
-      documentFields: [{ file: [], typeName: '' }],
+
+      // Combined document management: 
+      // 'file' for new uploads, 'url' for existing URLs, 'typeName' for name, 'originalName' for tracking changes
+      // 'isExisting' to differentiate between initially loaded and newly added fields
+      allDocumentFields: [{ file: [], typeName: '', url: '', originalName: '', isExisting: false }],
+
       documentsError: '',
       InstallationDate: '',
       WarrantyDate: '',
@@ -370,38 +174,42 @@ export default {
       snackbar: false,
       snackbarMessage: '',
       snackbarColor: 'error',
+      status: 1,
+      editMode: false,
+      dataLoaded: false,
     };
   },
   watch: {
     search(val) {
-      console.log('Client search updated:', val);
       this.GET_CLIENT_LIST({ name: val });
     },
     InstallationDate(val) {
-      console.log('Installation Date updated:', val);
       this.lastMainDate = val;
     },
-  },
-  validations() {
-    return {
-      selcetdClient: { required },
-      selcetedEquipment: { required },
-      MaintenancePeriod: { required, numeric },
-      serialNo: { required },
-      InstallationDate: { required },
-      WarrantyDate: { required },
-      invoice: { required },
-      installationReport: { required },
-      warranty: { required },
-      lastMainDate: { required },
-    };
-  },
-  props: {
-    visible: {
-      type: Boolean,
+    selcetdCategory(val) {
+      this.getSubcatList();
+      if (!val) {
+        this.selcetdSubCategory = '';
+        this.selcetedEquipment = '';
+      }
     },
-    title: {
-      type: String,
+    selcetdSubCategory(val) {
+      this.getEquiList();
+      if (!val) {
+        this.selcetedEquipment = '';
+      }
+    },
+    saleId: {
+      immediate: true,
+      async handler(newVal) {
+        if (newVal) {
+          this.editMode = true;
+          await this.loadSaleData(newVal);
+        } else {
+          this.editMode = false;
+          this.resetForm();
+        }
+      },
     },
   },
   computed: {
@@ -409,6 +217,7 @@ export default {
     ...mapState('category', ['categoryList']),
     ...mapState('subCategory', ['subcatList']),
     ...mapState('equipments', ['allEquipments']),
+    ...mapState('salesEquipment', ['editValue']),
     isMobile() {
       return this.$vuetify.display.smAndDown;
     },
@@ -418,7 +227,7 @@ export default {
       },
       set(value) {
         if (!value) {
-          console.log('Dialog closed');
+          this.resetForm();
           this.$emit('close');
         }
       },
@@ -427,327 +236,546 @@ export default {
   methods: {
     ...mapActions('clients', [
       'GET_CLIENT_LIST',
-      'ADD_CLIENT',
-      'DELETE_CLIENT',
-      'GET_CLIENT_BY_ID',
-      'UPDATE_CLIENT',
+      // 'ADD_CLIENT', // Not used in this component, but left for completeness if copy-pasted
+      // 'DELETE_CLIENT', // Not used
+      // 'GET_CLIENT_BY_ID', // Not used
+      // 'UPDATE_CLIENT', // Not used
     ]),
     ...mapActions('category', [
       'GET_ALL_CATEGORY',
-      'ADD_CATEGORY',
-      'UPDATE_CATEGORY',
-      'DELETE_CATEGORY',
+      // 'ADD_CATEGORY', // Not used
+      // 'UPDATE_CATEGORY', // Not used
+      // 'DELETE_CATEGORY', // Not used
     ]),
     ...mapActions('subCategory', ['GET_SUB_CATEGORY', 'GET_ALL_SUBCATEGORY']),
     ...mapActions('equipments', ['GET_EQUIPMENT', 'GET_ALL_EQUIPMENT']),
-    ...mapActions('salesEquipment', ['ADD_SALE_EQUIPMENT']),
+    ...mapActions('salesEquipment', [
+      'ADD_SALE_EQUIPMENT',
+      'UPDATE_SALE_EQUIPMENT',
+      'GET_SALE_EQUIPMENT_BY_ID',
+      'MANAGE_SALE_DOCUMENT',
+    ]),
+    async loadSaleData(saleId) {
+      try {
+        await this.ensureDataLoaded();
+        const sale = await this.GET_SALE_EQUIPMENT_BY_ID(saleId);
+        if (sale) {
+          this.serialNo = sale.serialNo || '';
+          this.MaintenancePeriod = sale.prevdays || '';
+          this.selcetdClient = sale.clientId || '';
+          this.selcetedEquipment = sale.equipmentId || '';
+          this.InstallationDate = sale.installationDate || '';
+          this.WarrantyDate = sale.warrantyDate || '';
+          this.lastMainDate = sale.LastMaintenanceDate || '';
+          this.status = sale.status !== undefined ? sale.status : 1;
+
+          // Populate direct attachment fields
+          this.invoice = sale.invoice ? [{ name: 'invoice', url: sale.invoice, file: [] }] : [];
+          this.amc = sale.annualMaintenanceContract ? [{ name: 'amc', url: sale.annualMaintenanceContract, file: [] }] : [];
+          this.installationReport = sale.installationReport ? [{ name: 'installationReport', url: sale.installationReport, file: [] }] : [];
+          this.warranty = sale.warrantyDocument ? [{ name: 'warranty', url: sale.warrantyDocument, file: [] }] : [];
+          this.maintenance = sale.maintenanceContract ? [{ name: 'maintenance', url: sale.maintenanceContract, file: [] }] : [];
+
+
+          // Handle additional documents
+          let parsedDocuments = [];
+          if (sale.documents) {
+            if (typeof sale.documents === 'string') {
+              try {
+                parsedDocuments = JSON.parse(sale.documents);
+                if (!Array.isArray(parsedDocuments)) {
+                  console.warn('Parsed sale.documents is not an array:', parsedDocuments);
+                  parsedDocuments = [];
+                }
+              } catch (error) {
+                console.error('Error parsing documents from fetched data in AddEquipment:', error);
+                parsedDocuments = [];
+              }
+            } else if (Array.isArray(sale.documents)) {
+              parsedDocuments = sale.documents;
+            }
+          }
+
+          this.allDocumentFields = parsedDocuments.map(doc => ({
+            file: [], // No file selected initially
+            typeName: doc.name || '',
+            url: doc.url || '', // Store the existing URL
+            originalName: doc.name || '', // Store original name for tracking changes
+            isExisting: true // Mark as an existing document
+          }));
+          // Ensure there's at least one empty field for new additions if no existing docs or if not enough.
+          if (this.allDocumentFields.length === 0) {
+            this.allDocumentFields.push({ file: [], typeName: '', url: '', originalName: '', isExisting: false });
+          }
+
+
+          this.selcetdCategory = sale.equipment?.subcategory?.categoryId || '';
+          if (this.selcetdCategory) {
+            await this.$nextTick();
+            this.getSubcatList();
+            this.selcetdSubCategory = sale.equipment?.subcategoryId || '';
+            if (this.selcetdSubCategory) {
+              await this.$nextTick();
+              this.getEquiList();
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading sale data:', error);
+        this.showSnackbar('Failed to load sale data', 'error');
+      }
+    },
+    async ensureDataLoaded() {
+      if (!this.dataLoaded) {
+        const query = { size: 150 };
+        await Promise.all([
+          this.GET_CLIENT_LIST(query),
+          this.GET_ALL_CATEGORY(query),
+          this.GET_ALL_SUBCATEGORY(query),
+          this.GET_ALL_EQUIPMENT(),
+        ]);
+        this.dataLoaded = true;
+      }
+    },
     getSubcatList() {
-      console.log('Fetching subcategory list for category:', this.selcetdCategory);
       this.availSubCatList = [];
+      this.selcetdSubCategory = '';
       if (!this.selcetdCategory) {
         this.availSubCatList = this.subcatList;
       } else {
         const list = this.$store.getters['subCategory/get_all_sub_cat_with_cat_id'](
           this.selcetdCategory
         );
-        this.availSubCatList = list;
-        console.log('Subcategory list:', this.availSubCatList);
+        this.availSubCatList = list || [];
       }
     },
     getEquiList() {
-      console.log('Fetching equipment list for subcategory:', this.selcetdSubCategory);
       this.availableEquilist = [];
+      this.selcetedEquipment = '';
       if (!this.selcetdSubCategory) {
         this.availableEquilist = this.allEquipments;
       } else {
         const list = this.$store.getters['equipments/get_all_equipment_with_sub_catId'](
           this.selcetdSubCategory
         );
-        this.availableEquilist = list;
-        console.log('Equipment list:', this.availableEquilist);
+        this.availableEquilist = list || [];
       }
     },
-    addDocumentField() {
-      if (this.documentFields.length < 10) {
-        this.documentFields.push({ file: [], typeName: '' });
+    addAdditionalDocumentField() {
+      if (this.allDocumentFields.length < 10) {
+        this.allDocumentFields.push({ file: [], typeName: '', url: '', originalName: '', isExisting: false });
         this.documentsError = '';
-        console.log('Added document field. Total fields:', this.documentFields.length);
       } else {
         this.documentsError = 'Maximum 10 documents allowed';
         this.showSnackbar('Maximum 10 documents allowed', 'error');
-        console.error('Cannot add more documents. Limit reached:', this.documentFields.length);
       }
     },
-    removeDocument(index) {
-      if (this.documentFields.length > 1) {
-        this.documentFields.splice(index, 1);
-        this.documentsError = '';
-        console.log('Removed document field at index:', index, 'Total fields:', this.documentFields.length);
-      } else {
-        console.log('Cannot remove last document field');
+    async removeAdditionalDocument(index, isExisting) {
+      if (this.allDocumentFields.length === 1 && !isExisting) {
+        this.showSnackbar('Cannot remove the last empty document field.', 'info');
+        return;
       }
+
+      const docToRemove = this.allDocumentFields[index];
+      if (isExisting && docToRemove.url) { // If it's an existing document with a URL, attempt to delete from server
+        try {
+          const response = await this.MANAGE_SALE_DOCUMENT({
+            saleId: this.saleId,
+            action: 'delete',
+            index: index, // Backend should use this index to target the specific document
+            name: docToRemove.typeName // Optional, for logging
+          });
+          if (response.response === 'success') {
+            this.showSnackbar('Document deleted successfully', 'success');
+            this.allDocumentFields.splice(index, 1);
+          } else {
+            this.showSnackbar(response.message || 'Failed to delete document from server', 'error');
+          }
+        } catch (error) {
+          console.error('Error deleting document:', error);
+          this.showSnackbar(error.message || 'Failed to delete document', 'error');
+        }
+      } else {
+        // If it's a new, unsaved field, or an existing one without a URL, just remove locally
+        this.allDocumentFields.splice(index, 1);
+        this.showSnackbar('Document field removed locally.', 'info');
+      }
+      this.documentsError = '';
     },
     showSnackbar(message, color = 'error') {
       this.snackbarMessage = message;
       this.snackbarColor = color;
       this.snackbar = true;
-      console.log('Showing snackbar:', { message, color });
     },
-async addSale() {
-  console.log('Step 1: Starting form submission');
-
-  console.log('Step 2: Validating form fields with Vuelidate');
-  await this.v$.$validate(); // Ensure validation is awaited
-  console.log('Step 2.1: Vuelidate validation errors:', this.v$.$errors);
-
-  console.log('Step 3: Checking document fields validity');
-  const validDocuments = this.documentFields.every(
-    (doc) => doc.file.length === 0 || doc.file.length === 1
-  );
-  this.documentsError =
-    this.documentFields.length > 10
-      ? 'Maximum 10 documents allowed'
-      : !validDocuments
-      ? 'Each document field must have exactly one file or be empty'
-      : '';
-  console.log('Step 3.1: Document fields:', this.documentFields);
-  console.log('Step 3.2: Valid documents:', validDocuments);
-  console.log('Step 3.3: Documents error:', this.documentsError);
-
-  console.log('Step 4: Validating equipmentId');
-  if (!this.selcetedEquipment) {
-    console.log('Step 4.4: Equipment not selected');
-    this.showSnackbar('Please select an equipment', 'error');
-    return;
-  }
-  const isValidEquipment = this.availableEquilist.some(
-    (equip) => equip.id === this.selcetedEquipment
-  );
-  console.log('Step 4.1: Selected equipment ID:', this.selcetedEquipment);
-  console.log('Step 4.2: Available equipment list:', this.availableEquilist);
-  console.log('Step 4.3: Is equipment valid?', isValidEquipment);
-
-  if (!isValidEquipment) {
-    console.log('Step 4.4: Invalid equipment selected');
-    this.showSnackbar('Invalid Equipment selected', 'error');
-    console.error('Invalid equipmentId:', this.selcetedEquipment);
-    return;
-  }
-
-  console.log('Step 5: Validating clientId');
-  if (!this.selcetdClient) {
-    console.log('Step 5.4: Client not selected');
-    this.showSnackbar('Please select a client', 'error');
-    return;
-  }
-  const isValidClient = this.clientList.some(
-    (client) => client.id === this.selcetdClient
-  );
-  console.log('Step 5.1: Selected client ID:', this.selcetdClient);
-  console.log('Step 5.2: Available client list:', this.clientList);
-  console.log('Step 5.3: Is client valid?', isValidClient);
-
-  if (!isValidClient) {
-    console.log('Step 5.4: Invalid client selected');
-    this.showSnackbar('Invalid Client selected', 'error');
-    console.error('Invalid clientId:', this.selcetdClient);
-    return;
-  }
-
-  if (!this.v$.$error && !this.documentsError) {
-    console.log('Step 6: Form is valid, preparing payload');
-    try {
-      console.log('Step 7: Constructing documents and typeNames arrays');
-      const documents = this.documentFields
-        .filter((doc) => doc.file.length > 0)
-        .map((doc) => doc.file[0]);
-      const typeNames = this.documentFields
-        .filter((doc) => doc.file.length > 0)
-        .map((doc, index) => doc.typeName || `Document_${index + 1}`);
-      console.log('Step 7.1: Documents:', documents.map(doc => doc.name));
-      console.log('Step 7.2: TypeNames:', typeNames);
-
-      console.log('Step 8: Building payload');
-      const payload = {
-        serialNo: this.serialNo,
-        equipmentId: this.selcetedEquipment,
-        clientId: this.selcetdClient,
-        maintenancePeriod: this.MaintenancePeriod,
-        installationDate: this.InstallationDate,
-        warrantyDate: this.WarrantyDate,
-        invoice: this.invoice.length > 0 ? this.invoice : null,
-        installationReport: this.installationReport.length > 0 ? this.installationReport : null,
-        warrantyDocument: this.warranty.length > 0 ? this.warranty : null,
-        maintenanceContract: this.maintenance.length > 0 ? this.maintenance : null,
-        annualMaintenanceContract: this.amc.length > 0 ? this.amc : null,
-        lastMaintenanceDate: this.lastMainDate,
-        documents,
-        typeNames,
-        purchaseDate: '',
-      };
-      console.log('Step 8.1: Payload:', {
-        serialNo: payload.serialNo,
-        equipmentId: payload.equipmentId,
-        clientId: payload.clientId,
-        maintenancePeriod: payload.maintenancePeriod,
-        installationDate: payload.installationDate,
-        warrantyDate: payload.warrantyDate,
-        invoice: payload.invoice?.length > 0 ? payload.invoice[0]?.name : null,
-        installationReport: payload.installationReport?.length > 0 ? payload.installationReport[0]?.name : null,
-        warrantyDocument: payload.warrantyDocument?.length > 0 ? payload.warrantyDocument[0]?.name : null,
-        maintenanceContract: payload.maintenanceContract?.length > 0 ? payload.maintenanceContract[0]?.name : null,
-        annualMaintenanceContract: payload.annualMaintenanceContract?.length > 0 ? payload.annualMaintenanceContract[0]?.name : null,
-        lastMaintenanceDate: payload.lastMaintenanceDate,
-        documents: payload.documents.map(doc => doc.name),
-        typeNames: payload.typeNames,
-        purchaseDate: payload.purchaseDate
-      });
-
-      console.log('Step 9: Calling ADD_SALE_EQUIPMENT action');
-      const response = await this.ADD_SALE_EQUIPMENT(payload);
-      console.log('Step 9.1: API response:', response);
-
-      if (response.response === 'success') {
-        console.log('Step 10: Sale added successfully');
-        this.$emit('success', { message: 'Sale added successfully' });
-        this.showSnackbar('Sale added successfully', 'success');
-        console.log('Step 10.1: Resetting form');
-        this.serialNo = '';
-        this.selcetedEquipment = '';
-        this.selcetdClient = '';
-        this.MaintenancePeriod = '';
-        this.InstallationDate = '';
-        this.WarrantyDate = '';
-        this.invoice = [];
-        this.installationReport = [];
-        this.warranty = [];
-        this.maintenance = [];
-        this.amc = [];
-        this.documentFields = [{ file: [], typeName: '' }];
-        this.lastMainDate = '';
-        this.v$.$reset();
-        this.show = false;
-      } else {
-        console.log('Step 10: Failed to add sale');
-        const errorMessage = response.message || 'Failed to add sale';
-        const errorDetails = response.errors ? JSON.stringify(response.errors) : '';
-        this.showSnackbar(`${errorMessage}${errorDetails ? ': ' + errorDetails : ''}`);
-        this.$emit('error', { message: errorMessage, details: response.errors });
-        console.error('API error:', {
-          message: errorMessage,
-          response,
-          errors: response.errors
-        });
+    async saveSale() {
+      // Input Validation
+      if (!this.selcetedEquipment) {
+        this.showSnackbar('Please select an equipment', 'error');
+        return;
       }
-    } catch (error) {
-      console.log('Step 11: Error during form submission');
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to add sale';
-      let userFriendlyMessage = errorMessage;
-      if (errorMessage.includes('foreign key constraint fails')) {
-        userFriendlyMessage = 'Invalid Equipment or Client selected. Please check your selections.';
+      if (!this.availableEquilist.some(equip => equip.id === this.selcetedEquipment)) {
+        this.showSnackbar('Invalid Equipment selected', 'error');
+        return;
       }
-      const errorDetails = error.response?.data?.errors ? JSON.stringify(error.response.data.errors) : error.stack;
-      this.showSnackbar(`${userFriendlyMessage}${errorDetails ? ': ' + errorDetails : ''}`);
-      this.$emit('error', { message: userFriendlyMessage, details: error.response?.data?.errors });
-      console.error('Submission error:', {
-        message: errorMessage,
-        response: error.response?.data,
-        status: error.response?.status,
-        errors: error.response?.data?.errors,
-        stack: error.stack
-      });
-    }
-  } else {
-    console.log('Step 6: Form validation failed');
-    const validationErrors = this.v$.$errors.map((err) => ({
-      field: err.$property,
-      message: err.$message,
-    }));
-    const errorMessage = validationErrors.length
-      ? `Validation errors: ${validationErrors.map((e) => `${e.field}: ${e.message}`).join(', ')}`
-      : 'Please fix validation errors';
-    this.showSnackbar(errorMessage);
-    console.error('Validation errors:', {
-      validationErrors,
-      documentsError: this.documentsError,
-      formState: {
-        selcetdClient: this.selcetdClient,
-        selcetedEquipment: this.selcetedEquipment,
-        MaintenancePeriod: this.MaintenancePeriod,
-        serialNo: this.serialNo,
-        InstallationDate: this.InstallationDate,
-        WarrantyDate: this.WarrantyDate,
-        invoice: this.invoice.length,
-        installationReport: this.installationReport.length,
-        warranty: this.warranty.length,
-        lastMainDate: this.lastMainDate,
-        documentFields: this.documentFields
+      if (!this.selcetdClient) {
+        this.showSnackbar('Please select a client', 'error');
+        return;
       }
-    });
-  }
-}
+      if (!this.clientList.some(client => client.id === this.selcetdClient)) {
+        this.showSnackbar('Invalid Client selected', 'error');
+        return;
+      }
+
+      // Validate additional document names
+      for (const doc of this.allDocumentFields) {
+        if ((doc.file.length > 0 || doc.url) && (!doc.typeName || doc.typeName.trim() === '')) {
+          this.documentsError = 'All additional documents must have a name.';
+          this.showSnackbar(this.documentsError, 'error');
+          return;
+        }
+      }
+      if (this.allDocumentFields.length > 10) {
+        this.documentsError = 'Maximum 10 additional documents allowed';
+        this.showSnackbar(this.documentsError, 'error');
+        return;
+      }
+      this.documentsError = ''; // Clear error if all good
+
+      try {
+        let response;
+        if (this.editMode) {
+          // --- For Edit Mode (UPDATE) ---
+          // Step 1: Process additional documents (add/edit) via MANAGE_SALE_DOCUMENT
+          const finalAdditionalDocuments = []; // To build the final array for the main update payload
+
+          for (let i = 0; i < this.allDocumentFields.length; i++) {
+            const doc = this.allDocumentFields[i];
+
+            if (doc.file.length > 0 && doc.file[0] instanceof File) {
+              // New file uploaded or existing file replaced
+              const action = doc.isExisting ? 'edit' : 'add';
+              const manageDocResponse = await this.MANAGE_SALE_DOCUMENT({
+                saleId: this.saleId,
+                action: action,
+                index: i, // Send index to backend for targeted update/add
+                name: doc.typeName,
+                document: doc.file[0],
+              });
+
+              if (manageDocResponse.response === 'success') {
+                finalAdditionalDocuments.push({ name: doc.typeName, url: manageDocResponse.url });
+              } else {
+                throw new Error(manageDocResponse.message || `Failed to ${action} document: ${doc.typeName}`);
+              }
+            } else if (doc.url && doc.typeName !== doc.originalName) {
+              // Existing document with name change but no new file
+              const manageDocResponse = await this.MANAGE_SALE_DOCUMENT({
+                saleId: this.saleId,
+                action: 'edit',
+                index: i,
+                name: doc.typeName,
+                document: null, // No new file
+              });
+              if (manageDocResponse.response === 'success') {
+                finalAdditionalDocuments.push({ name: doc.typeName, url: doc.url }); // Keep original URL
+              } else {
+                throw new Error(manageDocResponse.message || `Failed to update document name: ${doc.typeName}`);
+              }
+            } else if (doc.url) {
+              // Existing document with no changes to file or name, just include its metadata
+              finalAdditionalDocuments.push({ name: doc.typeName, url: doc.url });
+            }
+            // Documents that were locally removed (or had no file/url/name) are skipped.
+          }
+
+          // Step 2: Prepare main payload for UPDATE_SALE_EQUIPMENT
+          const mainPayload = {
+            id: this.saleId,
+            serialNo: this.serialNo,
+            equipmentId: this.selcetedEquipment,
+            clientId: this.selcetdClient,
+            maintenancePeriod: this.MaintenancePeriod,
+            installationDate: this.InstallationDate,
+            warrantyDate: this.WarrantyDate,
+            lastMaintenanceDate: this.lastMainDate,
+            status: this.status,
+
+            // Direct attachments (pass the File object if selected, otherwise null)
+            invoice: this.invoice.length > 0 ? this.invoice[0] : null,
+            installationReport: this.installationReport.length > 0 ? this.installationReport[0] : null,
+            warrantyDocument: this.warranty.length > 0 ? this.warranty[0] : null,
+            maintenanceContract: this.maintenance.length > 0 ? this.maintenance[0] : null,
+            annualMaintenanceContract: this.amc.length > 0 ? this.amc[0] : null,
+
+            // Send the finalized additional documents array as a JSON string
+            documents: JSON.stringify(finalAdditionalDocuments),
+          };
+
+          response = await this.UPDATE_SALE_EQUIPMENT(mainPayload);
+
+        } else {
+          // --- For Add Mode (ADD) ---
+          // Prepare new additional documents for initial upload
+          const documentsToUpload = this.allDocumentFields
+            .filter(doc => doc.file.length > 0 && doc.typeName.trim() !== '')
+            .map(doc => doc.file[0]);
+          const typeNamesForUpload = this.allDocumentFields
+            .filter(doc => doc.file.length > 0 && doc.typeName.trim() !== '')
+            .map(doc => doc.typeName);
+
+          const payload = {
+            serialNo: this.serialNo,
+            equipmentId: this.selcetedEquipment,
+            clientId: this.selcetdClient,
+            maintenancePeriod: this.MaintenancePeriod,
+            installationDate: this.InstallationDate,
+            warrantyDate: this.WarrantyDate,
+            lastMaintenanceDate: this.lastMainDate,
+
+            invoice: this.invoice.length > 0 ? this.invoice[0] : null,
+            installationReport: this.installationReport.length > 0 ? this.installationReport[0] : null,
+            warrantyDocument: this.warranty.length > 0 ? this.warranty[0] : null,
+            maintenanceContract: this.maintenance.length > 0 ? this.maintenance[0] : null,
+            annualMaintenanceContract: this.amc.length > 0 ? this.amc[0] : null,
+
+            documents: documentsToUpload, // Array of File objects
+            typeNames: typeNamesForUpload, // Array of names
+            purchaseDate: '', // Assuming this is not collected
+            status: this.status,
+          };
+          response = await this.ADD_SALE_EQUIPMENT(payload);
+        }
+
+        if (response.response === 'success') {
+          this.$emit('success', { message: this.editMode ? 'Sale updated successfully' : 'Sale added successfully' });
+          this.showSnackbar(this.editMode ? 'Sale updated successfully' : 'Sale added successfully', 'success');
+          this.resetForm();
+          this.show = false;
+          window.location.reload(); // <--- Added this line
+          // Emit a custom event to signal the parent to refresh data
+          this.$emit('refreshData');
+        } else {
+          const errorMessage = response.message || 'Failed to save sale';
+          this.showSnackbar(errorMessage, 'error');
+          this.$emit('error', { message: errorMessage, details: response.errors });
+        }
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message || 'Failed to save sale';
+        let userFriendlyMessage = errorMessage;
+        if (errorMessage.includes('foreign key constraint fails')) {
+          userFriendlyMessage = 'Invalid Equipment or Client selected. Please check your selections.';
+        } else if (errorMessage.includes('already exists')) { // Catch unique constraint errors
+          userFriendlyMessage = 'A sales record with this serial number already exists.';
+        }
+        this.showSnackbar(userFriendlyMessage, 'error');
+        this.$emit('error', { message: userFriendlyMessage, details: error.response?.data?.errors });
+      }
+    },
+    resetForm() {
+      this.serialNo = '';
+      this.selcetedEquipment = '';
+      this.selcetdClient = '';
+      this.MaintenancePeriod = '';
+      this.InstallationDate = '';
+      this.WarrantyDate = '';
+      this.lastMainDate = '';
+      this.invoice = [];
+      this.installationReport = [];
+      this.warranty = [];
+      this.maintenance = [];
+      this.amc = [];
+      this.allDocumentFields = [{ file: [], typeName: '', url: '', originalName: '', isExisting: false }];
+      this.selcetdCategory = '';
+      this.selcetdSubCategory = '';
+      this.availSubCatList = [];
+      this.availableEquilist = [];
+      this.status = 1;
+      this.documentsError = '';
+    },
   },
-created() {
-  console.log('Component created. Fetching initial data');
-  const query = { size: 150 };
-  this.GET_CLIENT_LIST(query);
-  this.GET_ALL_CATEGORY(query);
-  this.GET_ALL_SUBCATEGORY(query);
-  this.GET_ALL_EQUIPMENT();
-}
+  async created() {
+    await this.ensureDataLoaded();
+  },
 };
 </script>
-
 <style scoped>
+/* Dialog and Base Styles */
 .dialog-card {
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
+  border-radius: 16px;
+  /* Larger border-radius */
   background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  /* More prominent shadow */
 }
 
 .close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: none;
+  /* color: white !important; Icon color for close button */
+  transition: transform 0.2s ease-in-out;
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.1);
+
+}
+
+.dialog-title {
+  background: linear-gradient(90deg, #4d90fe, #285bc7);
+  /* Consistent gradient header */
+  color: white !important;
+  padding: 16px 24px;
+  font-size: 1.5rem !important;
+  /* Larger title font */
+  font-weight: 700;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  display: flex;
+  align-items: center;
 }
 
 .form-container {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
-  background: #fafafa;
+  padding: 32px;
+  /* Increased padding */
+  background: #f8fbfd;
+  /* Lighter background for content */
 }
 
-.custom-field {
+/* Modern Input Field Styles */
+.modern-field {
   border-radius: 8px;
   background: #ffffff;
   transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  /* Subtle shadow for depth */
 }
 
-.custom-field:focus-within {
-  box-shadow: 0 0 8px rgba(123, 31, 162, 0.3);
+.modern-field:focus-within {
+  box-shadow: 0 0 0 3px rgba(77, 144, 254, 0.2), 0 1px 5px rgba(0, 0, 0, 0.1);
+  /* Focus glow */
+  border-color: #4d90fe;
 }
 
+/* Ensure outlined variant border color */
+.modern-field .v-input__control {
+  border-color: #e0e0e0;
+  /* Default border color */
+}
+
+/* Icons within inputs */
+.modern-field .v-input__prepend-inner .v-icon,
+.modern-file-field .v-input__prepend-inner .v-icon {
+  color: #607d8b !important;
+  /* Muted icon color for all inputs */
+}
+
+/* Labels within inputs */
+.modern-field .v-label {
+  color: #757575 !important;
+  /* Lighter label color */
+}
+
+/* File Input Specific Styles */
+.modern-file-field {
+  border-radius: 8px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.modern-file-field:focus-within {
+  box-shadow: 0 0 0 3px rgba(77, 144, 254, 0.2), 0 1px 5px rgba(0, 0, 0, 0.1);
+  border-color: #4d90fe;
+}
+
+/* Document Rows - for existing and new additional documents */
+.existing-doc-row,
+.new-doc-row {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  /* Space between document entries */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+/* Delete/Minus Button for Document Rows */
+.delete-btn {
+  min-width: unset !important;
+  padding: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background-color: #ef9a9a;
+  /* Light red background */
+  transition: all 0.2s ease-in-out;
+}
+
+.delete-btn .v-icon {
+  color: white !important;
+  /* White icon on red background */
+  font-size: 18px !important;
+}
+
+.delete-btn:hover {
+  background-color: #e57373 !important;
+  transform: scale(1.1);
+}
+
+/* .delete{
+  background: #d32f2f;
+  color:white;
+  border-radius: 50%;
+} */
+/* Add Document Field Button */
+.add-document-btn {
+  background: #e57373 !important;
+  /* A nice blue for add button */
+  color: blue;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.mt-2 {
+  background-color: #4d90fe;
+  border-radius: 20px;
+  color: white
+}
+
+.add-document-btn:hover {
+  background: #285bc7 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Action Buttons (Save/Cancel) */
 .action-container {
   background: #ffffff;
   border-top: 1px solid #eee;
   padding: 16px 24px;
   justify-content: flex-end;
   gap: 12px;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
 
 .action-btn {
   min-width: 120px;
-  border-radius: 25px;
+  border-radius: 28px;
+  /* More rounded buttons */
   text-transform: uppercase;
   font-weight: 600;
-  padding: 8px 24px;
+  padding: 10px 28px;
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
 }
 
 .cancel-btn {
@@ -756,18 +784,25 @@ created() {
 }
 
 .cancel-btn:hover {
-  background: #d0d0d0;
+  background: #c7c7c7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .save-btn {
-  background: linear-gradient(45deg, #d46f1c, #7b1fa2);
+  background: linear-gradient(45deg, #4d90fe, #285bc7);
+  /* Blue gradient for save */
   color: white;
 }
 
 .save-btn:hover {
-  background: linear-gradient(45deg, #8e24aa, #6a1b9a);
+  background: linear-gradient(45deg, #285bc7, #1e4599);
+  /* Darker gradient on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Error Text */
 .error-text {
   color: #d32f2f;
   font-size: 0.75rem;
@@ -775,6 +810,7 @@ created() {
   display: block;
 }
 
+/* Responsive adjustments */
 @media (min-width: 601px) {
   .dialog-card {
     margin: 24px;
@@ -782,13 +818,16 @@ created() {
 
   .v-row {
     margin: -12px;
+    /* Adjust row spacing */
   }
 
   .v-col {
     padding: 12px;
+    /* Adjust column padding */
   }
 
-  .custom-field {
+  .modern-field,
+  .modern-file-field {
     font-size: 0.95rem;
   }
 }
@@ -801,7 +840,7 @@ created() {
   }
 
   .dialog-title {
-    font-size: 1.1rem;
+    font-size: 1.2rem !important;
     padding: 12px 16px;
   }
 
@@ -811,29 +850,40 @@ created() {
 
   .v-row {
     margin: -8px;
+    /* Adjust row spacing for mobile */
   }
 
   .v-col {
     padding: 8px;
+    /* Adjust column padding for mobile */
   }
 
-  .custom-field {
-    font-size: 0.9rem;
+  .modern-field,
+  .modern-file-field {
+    font-size: 0.88rem;
   }
 
   .action-container {
     flex-direction: column;
-    padding: 16px;
+    /* Stack buttons vertically on small screens */
+    padding: 12px;
     gap: 8px;
   }
 
   .action-btn {
     width: 100%;
-    padding: 10px;
+    /* Full width buttons on mobile */
+    padding: 8px 16px;
   }
 
   .error-text {
     font-size: 0.7rem;
+  }
+
+  .existing-doc-row,
+  .new-doc-row {
+    padding: 8px;
+    margin-bottom: 10px;
   }
 }
 </style>

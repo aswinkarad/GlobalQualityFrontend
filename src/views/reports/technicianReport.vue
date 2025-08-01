@@ -6,11 +6,7 @@
                 <v-icon color="white">mdi-chevron-right</v-icon>
             </template>
             <template v-slot:item="{ item }">
-                <v-breadcrumbs-item 
-                    :href="item.href" 
-                    :disabled="item.disabled" 
-                    class="custom-breadcrumb-item"
-                >
+                <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="custom-breadcrumb-item">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </template>
@@ -24,32 +20,14 @@
             <div class="mt-4 mb-2">
                 <v-row>
                     <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-model="workingStatusId" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="statuses" 
-                            item-title="name" 
-                            item-value="id" 
-                            clearable 
-                            label="Status"
-                            @update:modelValue="filterService"
-                        ></v-autocomplete>
+                        <v-autocomplete v-model="workingStatusId" hide-details variant="outlined" density="comfortable"
+                            :items="statuses" item-title="name" item-value="id" clearable label="Status"
+                            @update:modelValue="filterService"></v-autocomplete>
                     </v-col>
                     <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-model="techId" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="tech" 
-                            item-title="username" 
-                            item-value="id" 
-                            clearable 
-                            label="Technician"
-                            @update:modelValue="filterService"
-                        ></v-autocomplete>
+                        <v-autocomplete v-model="techId" hide-details variant="outlined" density="comfortable"
+                            :items="tech" item-title="username" item-value="id" clearable label="Technician"
+                            @update:modelValue="filterService"></v-autocomplete>
                     </v-col>
                     <!-- <v-col cols="12" md="2">
                         <v-text-field 
@@ -75,28 +53,25 @@
                     </v-col> -->
                     <v-col cols="12" md="2" style="align-self: center;">
                         <div class="d-flex justify-end">
-                            <v-btn 
-                                style="background: rgb(4 43 76);" 
-                                @click="filterService"
-                            >
+                            <v-btn style="background: rgb(4 43 76);" @click="filterService">
                                 <span style="color: white">Filter</span>
                             </v-btn>
                             <v-menu open-on-hover>
                                 <template v-slot:activator="{ props }">
-                                    <v-btn 
-                                        v-bind="props" 
-                                        style="background: rgb(4 43 76);"
-                                        class="ml-2"
-                                    >
+                                    <v-btn v-bind="props" style="background: rgb(4 43 76);" class="ml-2">
                                         <span style="color: white">Export</span>
                                     </v-btn>
                                 </template>
                                 <v-list style="cursor: pointer">
-                                    <v-list-item>
+                                    <!-- <v-list-item>
                                         <JsonCSV :data="json_data" :name="`Technician_Report_${new Date().toISOString().split('T')[0]}.csv`">
                                             <v-list-item-title>CSV</v-list-item-title>
                                         </JsonCSV>
+                                    </v-list-item> -->
+                                    <v-list-item @click="toCSV">
+                                        <v-list-item-title>CSV</v-list-item-title>
                                     </v-list-item>
+
                                     <v-list-item>
                                         <v-list-item-title @click="toPdf()">PDF</v-list-item-title>
                                     </v-list-item>
@@ -127,7 +102,8 @@
                     <td>{{ i + 1 }}</td>
                     <td><span v-if="item.user">{{ item.user.username }}</span><span v-else>N/A</span></td>
                     <td>{{ item.sale?.equipment?.equipmentName || 'N/A' }}</td>
-                    <td>{{ item.sale?.client?.name || 'N/A' }} <span v-if="item.sale?.equipment?.arabicname">{{ ' ' + item.sale.equipment.arabicname }}</span></td>
+                    <td>{{ item.sale?.client?.name || 'N/A' }} <span v-if="item.sale?.equipment?.arabicname">{{ ' ' +
+                        item.sale.equipment.arabicname }}</span></td>
                     <td>{{ item.sale?.serialNo || 'N/A' }}</td>
                     <td>{{ item.callRegisterDate?.split('T')[0] || 'N/A' }}</td>
                     <td>{{ item.priority?.priority || 'N/A' }}</td>
@@ -135,8 +111,7 @@
                     <td>
                         <v-chip
                             :class="{ Open: item.workingStatusId == 1, Accepted: item.workingStatusId == 2, Completed: item.workingStatusId == 3, Verified: item.workingStatusId == 4, Cancel: item.workingStatusId == 5 }"
-                            style="min-width: 100px; cursor: pointer; color: white;"
-                        >
+                            style="min-width: 100px; cursor: pointer; color: white;">
                             <span class="ma-auto">{{ item.working_status?.workingStatus || 'N/A' }}</span>
                         </v-chip>
                     </td>
@@ -155,13 +130,10 @@ import paginationVue from '@/components/pagination.vue';
 import { mapActions, mapState } from 'vuex';
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
-import JsonCSV from 'vue-json-csv';
-
 export default {
     name: 'TechnicianReport',
     components: {
         paginationVue,
-        JsonCSV
     },
     data() {
         return {
@@ -254,8 +226,20 @@ export default {
             });
         },
 
+        // toCSV() {
+        //     this.json_data = this.serviceList.map(el => ({
+        //         'TECHNICIAN': el.user?.username || 'N/A',
+        //         'EQUIPMENT NAME': el.sale?.equipment?.equipmentName || 'N/A',
+        //         'CLIENT NAME': el.sale?.client?.name || 'N/A',
+        //         'SERIAL NUMBER': el.sale?.serialNo || 'N/A',
+        //         'CALL REGISTRATION DATE': el.callRegisterDate?.split('T')[0] || 'N/A',
+        //         'PRIORITY': el.priority?.priority || 'N/A',
+        //         'CREATED AT': this.formatDate(el.createdAt),
+        //         'STATUS': el.working_status?.workingStatus || 'N/A',
+        //     }));
+        // },
         toCSV() {
-            this.json_data = this.serviceList.map(el => ({
+            const data = this.serviceList.map(el => ({
                 'TECHNICIAN': el.user?.username || 'N/A',
                 'EQUIPMENT NAME': el.sale?.equipment?.equipmentName || 'N/A',
                 'CLIENT NAME': el.sale?.client?.name || 'N/A',
@@ -265,7 +249,29 @@ export default {
                 'CREATED AT': this.formatDate(el.createdAt),
                 'STATUS': el.working_status?.workingStatus || 'N/A',
             }));
+
+            if (!data.length) {
+                alert('No data available to export.');
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const csvRows = [
+                headers.join(','), // Header row
+                ...data.map(row => headers.map(header => `"${String(row[header]).replace(/"/g, '""')}"`).join(','))
+            ];
+
+            const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.setAttribute('download', `Technician_Report_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         },
+
 
         async toPdf() {
             const payload = {
@@ -404,11 +410,25 @@ export default {
     font-family: 'Montserrat', sans-serif;
 }
 
-.Open { background: #1985d0; }
-.Accepted { background: #20ad8c; }
-.Completed { background: #fd5e00; }
-.Verified { background: #1ad539; }
-.Cancel { background: #ff0000; }
+.Open {
+    background: #1985d0;
+}
+
+.Accepted {
+    background: #20ad8c;
+}
+
+.Completed {
+    background: #fd5e00;
+}
+
+.Verified {
+    background: #1ad539;
+}
+
+.Cancel {
+    background: #ff0000;
+}
 </style>
 
 <style>

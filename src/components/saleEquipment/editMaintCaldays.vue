@@ -1,14 +1,13 @@
 <template>
     <div class="text-center">
         <v-dialog v-model="show" transition="dialog-bottom-transition" activator="parent">
-            <v-card width="584">
+            <v-card width="300">
                 <v-card-title>
                     <div class="text-h6" style="font-family: Montserrat, sans-serif !important;">Edit maintenance</div>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-row>
-                            
                             <!-- <v-col cols="12" sm="6" md="4">
                                 <v-text-field  label="Calibration Period" v-model="items.caldays"
                                     density="comfortable" variant="underlined">
@@ -19,15 +18,15 @@
                                 </span>
                             </v-col> -->
                             <v-col cols="12" sm="6" md="4">
-                                <v-text-field  label="Maintenance Period" v-model="items.prevdays"
-                                    density="comfortable" variant="underlined">
+                                <v-text-field label="Maintenance Period" v-model="items.prevdays" density="comfortable"
+                                    variant="underlined">
                                 </v-text-field>
                                 <span v-if="v$.MaintenancePeriod.$error" style="color: red">
                                     {{ v$.MaintenancePeriod.$errors[0].$message }}
                                     <!-- Maintenance Period is required -->
                                 </span>
                             </v-col>
-                           
+
 
                         </v-row>
                     </v-container>
@@ -160,52 +159,67 @@ export default {
                 this.availableEquilist = list
             }
         },
+
         addSale() {
-        this.selcetdClient  = this.items.clientId
-        this.selcetedEquipment = this.items.equipment.id
-        // this.CalPeriod = this.items.caldays
-        this.MaintenancePeriod = this.items.prevdays
-        this.InstallationDate = this.items.installationDate
-        this.WarrantyDate = this.items.warrantyDate
-        this.serialNo  = this.items.serialNo
-        this.orderDate  = this.items.orderDate
-        
+            this.selcetdClient = this.items.clientId;
+            this.selcetedEquipment = this.items.equipment.id;
+            this.MaintenancePeriod = this.items.prevdays;
+            this.InstallationDate = this.items.installationDate;
+            this.WarrantyDate = this.items.warrantyDate;
+            this.serialNo = this.items.serialNo;
+            this.orderDate = this.items.orderDate;
+
             this.v$.$validate();
 
             if (!this.v$.$error) {
-                const payloads = {
-                    serialNo: this.serialNo,
-                    equipmentId: this.selcetedEquipment,
-                    clientId: this.selcetdClient,
-                    // callibrationPeriod: this.CalPeriod,
-                    maintenancePeriod: this.MaintenancePeriod,
-                    installationDate: this.InstallationDate,
-                    warrantyDate: this.WarrantyDate,
-                    invoice: this.invoice,
-                    installationReport: this.installationReport,
-                    warrantyDocument: this.warranty,
-                    maintenanceContract: this.maintenance,
-                    annualMaintenanceContract: this.amc,
-                    orderDate: this.orderDate
-                }
-                this.$emit('save', payloads)
-                // console.log(payloads)
+                // ✅ Create FormData
+                const formData = new FormData();
+                formData.append('serialNo', this.serialNo);
+                formData.append('equipmentId', this.selcetedEquipment);
+                formData.append('clientId', this.selcetdClient);
+                formData.append('maintenancePeriod', this.MaintenancePeriod);
+                formData.append('installationDate', this.InstallationDate);
+                formData.append('warrantyDate', this.WarrantyDate);
+                formData.append('orderDate', this.orderDate);
+
+                // Optional file fields (only append if not empty)
+                if (this.invoice) formData.append('invoice', this.invoice);
+                if (this.installationReport) formData.append('installationReport', this.installationReport);
+                if (this.warranty) formData.append('warrantyDocument', this.warranty);
+                if (this.maintenance) formData.append('maintenanceContract', this.maintenance);
+                if (this.amc) formData.append('annualMaintenanceContract', this.amc);
+
+                // ✅ Get the ID from items and dispatch the Vuex action
+                const saleId = this.items.id; // Assuming `id` is present in `items`
+
+                this.$store.dispatch('salesEquipment/UPDATE_SALE_EQUIPMENT', {
+                    id: saleId,
+                    formData: formData
+                })
+                    .then(response => {
+                        this.$emit('close');
+                        this.$emit('updated', response); // Optional: emit update event
+                    })
+                    .catch(error => {
+                        console.error('Failed to update sale:', error);
+                    });
             }
         },
-        async initail(){
+
+        async initail() {
             await this.GET_CLIENT_LIST();
             await this.GET_ALL_CATEGORY();
-            await this.GET_ALL_SUBCATEGORY().then(()=>{
+            await this.GET_ALL_SUBCATEGORY().then(() => {
                 this.getSubcatList()
             })
-            await this.GET_ALL_EQUIPMENT().then(()=>{
+            await this.GET_ALL_EQUIPMENT().then(() => {
                 this.getEquiList()
             })
         }
     },
     created() {
         // this.initail()
-       
+
     }
 }
 </script>

@@ -41,7 +41,7 @@
     },
     methods:{
         test(value){
-            this.$emit("chanegePage", value)
+            this.$emit("changePage", value)
         }
     }
   }

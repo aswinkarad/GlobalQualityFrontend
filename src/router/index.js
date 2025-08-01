@@ -28,7 +28,9 @@ import servicetReport from '@/views/reports/serviceReport.vue';
 import technicianReport from '@/views/reports/technicianReport.vue'
 import serviceType from '@/views/ServiceType/serviceType.vue'
 import MessageList from '@/views/services/Messages/MessageList.vue'
-
+import ServiceRequest_Type from '@/views/ServiceRequestType/ServiceRequestType.vue'
+import RequestType from '@/views/RequestType/RequestType.vue'
+import UserLog from '@/views/users/UserLog.vue'
 
 
 const routes = [
@@ -155,9 +157,25 @@ const routes = [
         component: serviceType
       },
       {
-        path: 'MessageList',
+        path: 'ServiceRequest_Type',
+        name: 'ServiceRequest_Type',
+        component: ServiceRequest_Type,
+      },
+      {
+        path: 'RequestType',
+        name: 'RequestType',
+        component: RequestType,
+      },
+      // THIS IS THE KEY CHANGE
+      {
+        path: 'messages/:serviceRequestId?', // Making serviceRequestId an optional parameter
         name: 'MessageList',
         component: MessageList
+      },
+      {
+        path: 'UserLog',
+        name:'UserLog',
+        component: UserLog
       },
     ],
     beforeEnter: (to, from, next) => {
@@ -192,7 +210,7 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0 };
   },
-  history,
+  history,  
   routes
 })
 

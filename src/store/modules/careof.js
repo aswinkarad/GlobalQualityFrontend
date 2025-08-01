@@ -2,7 +2,8 @@ import axios from 'axios'
 export default {
     namespaced: true,
     state: {
-        careofList: {}
+        careofList: {},
+        totalPages:''
     },
     mutations: {
         SET_CAREOF_LIST( state, data){
@@ -49,25 +50,40 @@ export default {
             
 
         },
-        async DELET_CAREOF({ commit }, payload){
-            // console.log(payload)
-            try {
-                const auth = JSON.parse(localStorage.getItem('user'));
-                const deleteCareof = await axios({
-                    method:'get',
-                    url :`${process.env.VUE_APP_BASE_URL}clients/delete_careof/${ payload.id }`,
+        // async DELET_CAREOF({ commit }, payload){
+        //     // console.log(payload)
+        //     try {
+        //         const auth = JSON.parse(localStorage.getItem('user'));
+        //         const deleteCareof = await axios({
+        //             method:'get',
+        //             url :`${process.env.VUE_APP_BASE_URL}clients/delete_careof/${ payload.id }`,
                 
-                    headers: {
-                        Authorization: 'Bearer ' + auth.access_token
-                    }
+        //             headers: {
+        //                 Authorization: 'Bearer ' + auth.access_token
+        //             }
     
-                })
-                // console.log(deleteCareof)
+        //         })
+        //         // console.log(deleteCareof)
 
-            } catch (error) {
-                console.log(error)
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // } ,
+        async DELET_CAREOF({ commit }, id) {
+    try {
+        const auth = JSON.parse(localStorage.getItem('user'));
+        await axios({
+            method: 'get',
+            url: `${process.env.VUE_APP_BASE_URL}clients/delete_careof/${id}`,
+            headers: {
+                Authorization: 'Bearer ' + auth.access_token
             }
-        } ,
+        });
+    } catch (error) {
+        console.error('Error in DELET_CAREOF:', error);
+    }
+},
+
         async EDIT_CAREOF({ commit }, payload){
             try{
                 const auth = JSON.parse(localStorage.getItem('user'));

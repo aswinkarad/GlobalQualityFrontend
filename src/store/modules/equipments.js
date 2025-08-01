@@ -5,7 +5,7 @@ export default {
         equipmentListAll: {},
         editValue:{},
         allEquipments:{},
-        statusList: {},
+        // statusList: {},
         equipmentTotalPage: ''
     },
     mutations: {
@@ -21,9 +21,9 @@ export default {
         SET_EQUIPMETS_TOTAL_PAGE(state, data){
             state.equipmentTotalPage = data
         },
-        SET_STATUS_LIST( state, data){
-            state.statusList = data
-        }
+        // SET_STATUS_LIST( state, data){
+        //     state.statusList = data
+        // }
     },
     actions: {
         async GET_EQUIPMENT({ commit, state }, payload) {
@@ -170,27 +170,27 @@ export default {
             // }
             await axios(options).then((res)=>{
                 commit('SET_ALL_EQUIPMENTS', res.data.data)
-                console.log(state.allEquipments)
+                // console.log(state.allEquipments)
                 // console.log(options)
             }).catch(err=>{
                 console.log(err);
             })
         },
-        async GET_STATUS_LIST({ commit, state }) {
-            const auth = JSON.parse(localStorage.getItem('user'))
-            // console.log(auth)
-            const data = await axios({
-                method: 'get',
-                url: `${process.env.VUE_APP_BASE_URL}equipment/list_of_warrantystatus`,
-                headers: {
-                    Authorization: 'Bearer ' + auth.access_token
-                }
-            })
+        // async GET_STATUS_LIST({ commit, state }) {
+        //     const auth = JSON.parse(localStorage.getItem('user'))
+        //     // console.log(auth)
+        //     const data = await axios({
+        //         method: 'get',
+        //         url: `${process.env.VUE_APP_BASE_URL}equipment/list_of_warrantystatus`,
+        //         headers: {
+        //             Authorization: 'Bearer ' + auth.access_token
+        //         }
+        //     })
 
-             commit('SET_STATUS_LIST', data.data)
-            //  console.log(data)
-            //  console.log(state.statusList)
-        },
+        //      commit('SET_STATUS_LIST', data.data)
+        //     //  console.log(data)
+        //     //  console.log(state.statusList)
+        // },
     },
     getters: {
         get_all_equipment_with_sub_catId: (state)=> (scatId) =>{

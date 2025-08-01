@@ -299,6 +299,17 @@ export default {
     border-radius: 12px;
     background: #ffffff;
 }
+.dialog-title {
+  background: linear-gradient(90deg, #4d90fe, #285bc7); /* Consistent gradient header */
+  color: white !important;
+  padding: 16px 24px;
+  font-size: 1.5rem !important; /* Larger title font */
+  font-weight: 700;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  display: flex;
+  align-items: center;
+}
 
 .close-btn {
     background: rgba(255, 255, 255, 0.2);
@@ -353,12 +364,12 @@ export default {
 }
 
 .save-btn {
-    background: linear-gradient(45deg, #d46f1c, #7b1fa2);
+    background:  #4d90fe;
     color: white;
 }
 
 .save-btn:hover {
-    background: linear-gradient(45deg, #8e24aa, #6a1b9a);
+    background:  #4d90fe;
 }
 
 .error-text {

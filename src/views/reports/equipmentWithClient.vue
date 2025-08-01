@@ -5,11 +5,7 @@
                 <v-icon color="white">mdi-chevron-right</v-icon>
             </template>
             <template v-slot:item="{ item }">
-                <v-breadcrumbs-item 
-                    :href="item.href" 
-                    :disabled="item.disabled" 
-                    class="custom-breadcrumb-item"
-                >
+                <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="custom-breadcrumb-item">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </template>
@@ -23,81 +19,45 @@
             <div class="mt-4 mb-2">
                 <v-row>
                     <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-model="clientName" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="clien" 
-                            item-title="name" 
-                            item-value="id" 
-                            clearable 
-                            label="Clients"
-                            @update:modelValue="filterEquipment"
-                        ></v-autocomplete>
+                        <v-autocomplete v-model="clientName" hide-details variant="outlined" density="comfortable"
+                            :items="clien" item-title="name" item-value="id" clearable label="Clients"
+                            @update:modelValue="filterEquipment"></v-autocomplete>
+                    </v-col>
+                    <!-- <v-col cols="12" md="2">
+                        <v-autocomplete v-model="warrantyStatus" hide-details variant="outlined" density="comfortable"
+                            :items="warrantyStatuses" item-title="name" item-value="value" clearable
+                            label="Warranty Status" @update:modelValue="filterEquipment"></v-autocomplete>
+                    </v-col> -->
+                    <v-col cols="12" md="2">
+                        <v-text-field v-model="installationDate" label="Installation Date" type="date" variant="outlined"
+                            density="comfortable" clearable @update:modelValue="filterEquipment"></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-model="warrantyStatus" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="warrantyStatuses" 
-                            item-title="name" 
-                            item-value="value" 
-                            clearable 
-                            label="Warranty Status"
-                            @update:modelValue="filterEquipment"
-                        ></v-autocomplete>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field 
-                            v-model="startDate" 
-                            label="Installation Date" 
-                            type="date" 
-                            variant="outlined"
-                            density="comfortable" 
-                            clearable
-                            @update:modelValue="filterEquipment"
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field 
-                            v-model="endDate" 
-                            label="Warranty Date" 
-                            type="date" 
-                            variant="outlined"
-                            density="comfortable" 
-                            clearable
-                            @update:modelValue="filterEquipment"
-                        ></v-text-field>
+                        <v-text-field v-model="warrantyDate" label="Warranty Date" type="date" variant="outlined"
+                            density="comfortable" clearable @update:modelValue="filterEquipment"></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2" style="align-self: center;">
                         <div class="d-flex justify-end">
-                            <v-btn 
-                                style="background: rgb(4, 43, 76);" 
-                                @click="filterEquipment"
-                                :disabled="isLoading"
-                            >
+                            <v-btn style="background: rgb(4, 43, 76);" @click="filterEquipment" :disabled="isLoading">
                                 <span style="color: white">Filter</span>
                             </v-btn>
                             <v-menu open-on-hover>
                                 <template v-slot:activator="{ props }">
-                                    <v-btn 
-                                        v-bind="props" 
-                                        style="background: rgb(4, 43, 76);"
-                                        class="ml-2"
-                                        :disabled="isLoading"
-                                    >
+                                    <v-btn v-bind="props" style="background: rgb(4, 43, 76);" class="ml-2"
+                                        :disabled="isLoading">
                                         <span style="color: white">Export</span>
                                     </v-btn>
                                 </template>
                                 <v-list style="cursor: pointer">
-                                    <v-list-item>
-                                        <JsonCSV :data="json_data" name="equipmentReport.csv">
+                                    <!-- <v-list-item> -->
+                                    <!-- <JsonCSV :data="json_data" name="equipmentReport.csv">
                                             <v-list-item-title>CSV</v-list-item-title>
-                                        </JsonCSV>
+                                        </JsonCSV> -->
+                                    <v-list-item @click="downloadCSV">
+                                        <v-list-item-title>CSV</v-list-item-title>
                                     </v-list-item>
+
+                                    <!-- </v-list-item> -->
                                     <v-list-item>
                                         <v-list-item-title @click="toPdf()">PDF</v-list-item-title>
                                     </v-list-item>
@@ -121,11 +81,11 @@
                     <th class="text-left">Installation Date</th>
                     <th class="text-left">Warranty Date</th>
                     <th class="text-left">Created At</th>
-                    <th class="text-left">Warranty Status</th>
+                    <!-- <th class="text-left">Warranty Status</th> -->
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, i) in saleEquipmentList" :key="item.id" class="table-row-hover">
+                <tr v-for="(item, i) in filteredSaleEquipmentList" :key="item.id" class="table-row-hover">
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.equipment?.equipmentName || 'N/A' }}</td>
                     <td>{{ item.client?.name || 'N/A' }}</td>
@@ -135,7 +95,7 @@
                     <td>{{ item.installationDate ? item.installationDate.split('T')[0] : 'N/A' }}</td>
                     <td>{{ item.warrantyDate ? item.warrantyDate.split('T')[0] : 'N/A' }}</td>
                     <td>{{ formatDate(item.createdAt) }}</td>
-                    <td>{{ item.warrantyStatus || getWarrantyStatus(item.warrantyDate) }}</td>
+                    <!-- <td>{{ item.warrantyStatus || getWarrantyStatus(item.warrantyDate) }}</td> -->
                 </tr>
             </tbody>
         </v-table>
@@ -143,7 +103,7 @@
         <div v-if="saleEquipmentList.length >= 1">
             <paginationVue :length="saleTotalPage" @chanegePage="chanegePage" />
         </div>
-        <snackbarVue :visible="snackbar" @close="snackbar=false" :text="snacKtext" :color="snackColor"/>
+        <snackbarVue :visible="snackbar" @close="snackbar = false" :text="snacKtext" :color="snackColor" />
     </v-container>
 </template>
 
@@ -171,19 +131,19 @@ export default {
             clientName: '',
             deviceType: '',
             warrantyStatus: '',
-            startDate: '',
-            endDate: '',
+            installationDate: '',
+            warrantyDate: '',
             json_data: [],
             isLoading: false,
             deviceTypes: [
                 { id: 1, name: 'Type A' },
                 { id: 2, name: 'Type B' },
             ],
-            warrantyStatuses: [
-                { name: 'Warranty Under', value: 'under' },
-                { name: 'Warranty Out', value: 'out' },
-                { name: 'All', value: '' }
-            ],
+            // warrantyStatuses: [
+            //     { name: 'Warranty Under', value: 'under' },
+            //     { name: 'Warranty Out', value: 'out' },
+            //     { name: 'All', value: '' } // Keep this as an empty string to represent no filter
+            // ],
             clien: [],
             snackbar: false,
             snacKtext: '',
@@ -193,6 +153,37 @@ export default {
     computed: {
         ...mapState('salesEquipment', ['saleEquipmentList', 'saleTotalPage', 'saleEquipmentReport']),
         ...mapState('clients', ['clientList']),
+
+        filteredSaleEquipmentList() {
+        let filtered = [...this.saleEquipmentList];
+        
+        // Filter by client
+        if (this.clientName) {
+            filtered = filtered.filter(item => item.clientId === this.clientName);
+        }
+        
+        // Filter by installation date
+        if (this.installationDate) {
+            const filterDate = new Date(this.installationDate);
+            filtered = filtered.filter(item => {
+                if (!item.installationDate) return false;
+                const itemDate = new Date(item.installationDate);
+                return itemDate.toDateString() === filterDate.toDateString();
+            });
+        }
+        
+        // Filter by warranty date
+        if (this.warrantyDate) {
+            const filterDate = new Date(this.warrantyDate);
+            filtered = filtered.filter(item => {
+                if (!item.warrantyDate) return false;
+                const itemDate = new Date(item.warrantyDate);
+                return itemDate.toDateString() === filterDate.toDateString();
+            });
+        }
+        
+        return filtered;
+    }
     },
     methods: {
         ...mapMutations('salesEquipment', ['REMOVE_SALE_EQUIPMENTS']),
@@ -201,7 +192,7 @@ export default {
         ...mapActions('salesEquipment', ['GET_ALL_SALE_EQUIPMENT', 'GET_ALL_SALE_EQUIPMENT_FOR_REPORT']),
 
         formatDate(date) {
-            if (!date) return 'N/A';                                                                                          
+            if (!date) return 'N/A';
             return new Date(date).toISOString().split('T')[0];
         },
 
@@ -212,8 +203,9 @@ export default {
             return warranty > today ? 'Warranty Under' : 'Warranty Out';
         },
 
-        toCSV() {
-            this.json_data = this.saleEquipmentList.map(el => ({
+
+        downloadCSV() {
+            const data = this.saleEquipmentList.map(el => ({
                 'EQUIPMENT NAME': el.equipment?.equipmentName || 'N/A',
                 'CLIENT NAME': el.client?.name || 'N/A',
                 'SERIAL NO': el.serialNo || 'N/A',
@@ -224,7 +216,29 @@ export default {
                 'CREATED AT': this.formatDate(el.createdAt),
                 'WARRANTY STATUS': el.warrantyStatus || this.getWarrantyStatus(el.warrantyDate)
             }));
+
+            if (data.length === 0) {
+                this.snackColor = 'error';
+                this.snacKtext = 'No data available to export';
+                this.snackbar = true;
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => headers.map(h => `"${row[h]}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'equipmentReport.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         },
+
 
         async toPdf() {
             try {
@@ -232,9 +246,9 @@ export default {
                 const payload = {
                     cid: this.clientName || '',
                     deviceType: this.deviceType || '',
-                    warrantyStatus: this.warrantyStatus || '',
-                    startDate: this.startDate || '',
-                    endDate: this.endDate || '',
+                    warrantyStatus: this.warrantyStatus === '' ? '' : this.warrantyStatus, // Ensure '' is passed for 'All'
+                    installationDate: this.installationDate || '',
+                    warrantyDate: this.warrantyDate || '',
                     size: 99999
                 };
                 console.log('PDF payload:', payload);
@@ -295,7 +309,7 @@ export default {
                 yPos += 7;
                 doc.text(`Warranty Status: ${this.warrantyStatus ? this.warrantyStatuses.find(w => w.value === this.warrantyStatus)?.name || 'All' : 'All'}`, 15, yPos);
                 yPos += 7;
-                doc.text(`Date Range: ${this.startDate && this.endDate ? `${this.startDate} ~ ${this.endDate}` : 'All'}`, 15, yPos);
+                doc.text(`Date Range: ${this.installationDate && this.warrantyDate ? `${this.installationDate} ~ ${this.warrantyDate}` : 'All'}`, 15, yPos);
 
                 autoTable(doc, {
                     startY: yPos + 10,
@@ -317,21 +331,20 @@ export default {
             }
         },
 
+
         async filterEquipment() {
             try {
                 this.isLoading = true;
                 const payload = {
                     cid: this.clientName || '',
-                    deviceType: this.deviceType || '',
                     warrantyStatus: this.warrantyStatus || '',
-                    startDate: this.startDate || '',
-                    endDate: this.endDate || '',
+                    installationDate: this.installationDate || '',
+                    warrantyDate: this.warrantyDate || '',
                     size: 15,
                     page: 1
                 };
                 console.log('Filter payload:', payload);
                 await this.GET_ALL_SALE_EQUIPMENT(payload);
-                console.log('saleEquipmentList:', this.saleEquipmentList);
             } catch (error) {
                 console.error('Error filtering equipment:', error);
                 this.snackColor = 'error';
@@ -342,6 +355,7 @@ export default {
             }
         },
 
+
         async chanegePage(page) {
             try {
                 this.isLoading = true;
@@ -350,9 +364,9 @@ export default {
                     size: 15,
                     cid: this.clientName || '',
                     deviceType: this.deviceType || '',
-                    warrantyStatus: this.warrantyStatus || '',
-                    startDate: this.startDate || '',
-                    endDate: this.endDate || ''
+                    warrantyStatus: this.warrantyStatus === '' ? '' : this.warrantyStatus, // Send empty string for 'All'
+                    installationDate: this.installationDate || '',
+                    warrantyDate: this.warrantyDate || ''
                 };
                 console.log('Change page payload:', query);
                 await this.GET_ALL_SALE_EQUIPMENT(query);
@@ -389,8 +403,6 @@ export default {
 }
 </script>
 
-<!-- Existing <style> sections remain unchanged -->
-
 <style scoped>
 .hmmsdashboard {
     background: linear-gradient(135deg, #F5F7FA, #E8ECEF);
@@ -399,7 +411,7 @@ export default {
 }
 
 .breadcrumbs-container {
-      background: linear-gradient(90deg, #4d90fe, #285bc7);
+    background: linear-gradient(90deg, #4d90fe, #285bc7);
     border-radius: 8px;
     padding: 10px 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

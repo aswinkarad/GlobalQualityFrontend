@@ -24,15 +24,7 @@
                 </span>
               </v-col>
             </v-row>
-            <!-- <v-row>
-              <v-col cols="12">
-                <v-select v-model="warrantyStatus" :items="warrantyStatusOptions" label="Warranty Status"
-                  variant="underlined" density="comfortable" hide-details></v-select>
-                <span v-if="v$.warrantyStatus.$error" class="error-text">
-                  {{ v$.warrantyStatus.$errors[0].$message }}
-                </span>
-              </v-col>
-            </v-row> -->
+          
             <v-row>
               <v-col cols="12">
                 <v-file-input accept="image/png, image/jpeg, image/bmp" v-model="image" prepend-icon="mdi-image-outline"
@@ -137,7 +129,7 @@
       },
     },
     methods: {
-      ...mapActions('equipments', ['GET_STATUS_LIST']),
+      // ...mapActions('equipments', ['GET_STATUS_LIST']),
       addCat() {
         this.v$.name.$validate();
         this.v$.image.$validate();
@@ -164,7 +156,7 @@
       this.name = '';
       this.image = '';
       this.model = '';
-      this.GET_STATUS_LIST();
+      // this.GET_STATUS_LIST();
     },
   };
   </script>
