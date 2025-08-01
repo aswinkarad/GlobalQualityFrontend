@@ -19,11 +19,19 @@
         <div class="text-h6 mb-2" style="font-family:'Montserrat', sans-serif !important">
             CARE OF
         </div>
-        <searchAndFilterToolbar :btn_text="cl_text" @btn_action="dialog = true" />
+        
+        <!-- Fixed searchAndFilterToolbar with search functionality -->
+        <searchAndFilterToolbar 
+            :btn_text="cl_text" 
+            @btn_action="dialog = true"
+            @search="handleSearch"
+            :search_value="searchQuery"
+            @clear_search="clearSearch"
+        />
 
         <!-- Grid Layout for Care Of Cards -->
         <v-row class="mt-4">
-            <v-col v-for="(item, i) in careofList" :key="item.id" cols="12" sm="6" md="3">
+            <v-col v-for="(item, i) in filteredCareofList" :key="item.id" cols="12" sm="6" md="3">
                 <v-card class="pa-4 card-hover" elevation="2">
                     <v-card-title class="text-h6 d-flex align-center">
                         <v-icon class="mr-2" color="blue-darken-2">mdi-account-circle</v-icon>
@@ -45,6 +53,18 @@
                             </v-avatar>
                         </v-hover>
                     </v-card-actions>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Show message when no results found -->
+        <v-row v-if="filteredCareofList.length === 0 && searchQuery" class="mt-4">
+            <v-col cols="12" class="text-center">
+                <v-card class="pa-8" elevation="2">
+                    <v-icon size="64" color="grey" class="mb-4">mdi-magnify-close</v-icon>
+                    <h3 class="text-h6 mb-2">No Results Found</h3>
+                    <p class="text-body-2 grey--text">No care of entries match your search query "{{ searchQuery }}"</p>
+                    <v-btn @click="clearSearch" color="primary" class="mt-2">Clear Search</v-btn>
                 </v-card>
             </v-col>
         </v-row>
@@ -86,14 +106,36 @@ export default {
             cl_text: 'Add Care Of',
             dialog: false,
             deleteValue: {},
-            dialog_title: 'Add Care Of'
+            dialog_title: 'Add Care Of',
+            searchQuery: '' // Added search query state
         }
     },
     computed: {
-        ...mapState('careof', ['careofList'])
+        ...mapState('careof', ['careofList']),
+        
+        // Computed property for filtered list
+        filteredCareofList() {
+            if (!this.searchQuery) {
+                return this.careofList;
+            }
+            
+            return this.careofList.filter(item => 
+                item.careof.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+        }
     },
     methods: {
         ...mapActions('careof', ['GET_CAREOF_LIST', 'ADD_CAREOF', 'DELET_CAREOF', 'EDIT_CAREOF']),
+
+        // Handle search functionality
+        handleSearch(query) {
+            this.searchQuery = query;
+        },
+
+        // Clear search
+        clearSearch() {
+            this.searchQuery = '';
+        },
 
         async addCareof(item) {
             try {

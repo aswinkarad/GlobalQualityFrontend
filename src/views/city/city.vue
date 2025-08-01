@@ -19,11 +19,17 @@
         <div class="text-h6 mb-2" style="font-family:'Montserrat', sans-serif !important">
             CITY
         </div>
-        <searchAndFilterToolbar :btn_text="cl_text" @btn_action="dialog = true" />
+        <searchAndFilterToolbar 
+            :btn_text="cl_text" 
+            @btn_action="dialog = true"
+            @search="handleSearch"
+            @filter="handleFilter"
+            @clear="clearFilters"
+        />
         
         <!-- Grid Layout for City Cards -->
         <v-row class="mt-4">
-            <v-col v-for="(item, i) in cityList" :key="item.id" cols="12" sm="6" md="3">
+            <v-col v-for="(item, i) in displayedCities" :key="item.id" cols="12" sm="6" md="3">
                 <v-card class="pa-4" elevation="2">
                     <v-card-title class="text-h6">{{ item.city }}</v-card-title>
                     <v-card-actions>
@@ -85,20 +91,103 @@ export default {
             edit_dialog_title: 'Edit City',
             dialog_title: 'Add City',
             delete_dialog: false,
-            deleteValue: {}
+            deleteValue: {},
+            
+            // Search and Filter functionality
+            searchQuery: '',
+            filterType: '',
+            filteredCities: [],
+            currentPage: 1,
+            itemsPerPage: 15
         }
     },
     computed: {
-        ...mapState('city', ['cityList', 'totalPages'])
+        ...mapState('city', ['cityList', 'totalPages']),
+        
+        displayedCities() {
+            // If no search or filter applied, return original cityList
+            if (!this.searchQuery && !this.filterType) {
+                return this.cityList || [];
+            }
+            
+            // Return filtered cities
+            return this.filteredCities;
+        }
     },
     methods: {
         ...mapActions('city', ['GET_CITY_LIST', 'ADD_CITY', 'DELETE_CITY', 'EDIT_CITY']),
+
+        // Handle search from searchAndFilterToolbar component
+        handleSearch(searchTerm) {
+            this.searchQuery = searchTerm.toLowerCase();
+            this.applyFilters();
+        },
+
+        // Handle filter from searchAndFilterToolbar component
+        handleFilter(filterType) {
+            this.filterType = filterType;
+            this.applyFilters();
+        },
+
+        // Clear all filters
+        clearFilters() {
+            this.searchQuery = '';
+            this.filterType = '';
+            this.filteredCities = [];
+            this.currentPage = 1;
+        },
+
+        // Apply search and filter logic
+        applyFilters() {
+            let cities = [...(this.cityList || [])];
+
+            // Apply search filter
+            if (this.searchQuery) {
+                cities = cities.filter(city => 
+                    city.city.toLowerCase().includes(this.searchQuery) ||
+                    (city.country && city.country.toLowerCase().includes(this.searchQuery)) ||
+                    (city.state && city.state.toLowerCase().includes(this.searchQuery))
+                );
+            }
+
+            // Apply category filter
+            if (this.filterType) {
+                switch (this.filterType) {
+                    case 'recent':
+                        // Filter cities added in last 30 days
+                        const thirtyDaysAgo = new Date();
+                        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                        cities = cities.filter(city => 
+                            city.created_at && new Date(city.created_at) > thirtyDaysAgo
+                        );
+                        break;
+                    case 'alphabetical':
+                        cities.sort((a, b) => a.city.localeCompare(b.city));
+                        break;
+                    case 'population':
+                        if (cities.some(city => city.population)) {
+                            cities.sort((a, b) => (b.population || 0) - (a.population || 0));
+                        }
+                        break;
+                    default:
+                        // Custom filter logic can be added here
+                        break;
+                }
+            }
+
+            this.filteredCities = cities;
+            this.currentPage = 1; // Reset to first page
+        },
 
         async AddCity(payload) {
             try {
                 await this.ADD_CITY(payload);
                 this.dialog = false;
                 await this.GET_CITY_LIST();
+                // Reapply filters after adding new city
+                if (this.searchQuery || this.filterType) {
+                    this.applyFilters();
+                }
             } catch (error) {
                 console.error('Error adding city:', error);
             }
@@ -115,6 +204,10 @@ export default {
                 await this.GET_CITY_LIST();
                 this.delete_dialog = false;
                 this.deleteValue = {};
+                // Reapply filters after deleting city
+                if (this.searchQuery || this.filterType) {
+                    this.applyFilters();
+                }
             } catch (error) {
                 console.error('Error deleting city:', error);
             }
@@ -137,12 +230,24 @@ export default {
                 this.edit_dialog = false;
                 this.edit_value = '';
                 this.edit_id = '';
+                // Reapply filters after editing city
+                if (this.searchQuery || this.filterType) {
+                    this.applyFilters();
+                }
             } catch (error) {
                 console.error('Error editing city:', error);
             }
         },
 
         changePage(page) {
+            this.currentPage = page;
+            // If filters are applied, handle pagination for filtered results
+            if (this.searchQuery || this.filterType) {
+                // For filtered results, we handle pagination client-side
+                return;
+            }
+            
+            // For non-filtered results, use original pagination logic
             const query = {
                 page: page,
                 size: 15

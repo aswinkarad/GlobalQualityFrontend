@@ -1,6 +1,5 @@
 <template>
-    <v-container class="px-10" fluid style="height:100vh; background:#e7f0f7 ;">
-        <!-- Breadcrumb Navigation -->
+    <v-container class="px-10" fluid style="height:100vh; background:#e7f0f7;">
         <v-breadcrumbs :items="breadcrumbs" class="breadcrumbs-container">
             <template v-slot:divider>
                 <v-icon color="white">mdi-chevron-right</v-icon>
@@ -15,28 +14,44 @@
         <div class="text-h6 mb-2" style="font-family:'Montserrat', sans-serif !important">
             Service Request Type
         </div>
-        <searchAndFilterToolbar :btn_text="cl_text" @btn_action="dialog = true" />
+        
+        <searchAndFilterToolbar 
+            :btn_text="cl_text" 
+            @btn_action="handleButtonAction" 
+        />
 
-        <!-- Grid Layout for Care Of Cards -->
         <v-row class="mt-4">
             <v-col v-for="(item, i) in ServiceRequestType" :key="item.id" cols="12" sm="6" md="3">
                 <v-card class="pa-4 card-hover" elevation="2">
                     <v-card-title class="text-h6 d-flex align-center">
-                        <!-- <v-icon class="mr-2" color="blue-darken-2">mdi-account-circle</v-icon> -->
                         {{ item.type }}
                     </v-card-title>
                     <v-card-actions class="justify-end">
                         <v-hover v-slot="{ isHovering, props }">
-                            <v-avatar rounded size="small" v-bind="props" class="mr-1" @click="openEditDialog(item)"
-                                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="blue-darken-2"
-                                style="cursor: pointer;">
+                            <v-avatar 
+                                rounded 
+                                size="small" 
+                                v-bind="props" 
+                                class="mr-1" 
+                                @click="openEditDialog(item)"
+                                :class="isHovering ? 'elevation-12' : 'elevation-2'" 
+                                color="blue-darken-2"
+                                style="cursor: pointer;"
+                            >
                                 <v-icon size="18" icon="mdi-pencil-outline"></v-icon>
                             </v-avatar>
                         </v-hover>
                         <v-hover v-slot="{ isHovering, props }">
-                            <v-avatar rounded size="small" v-bind="props" class="mr-1" @click="openDeleteDialog(item)"
-                                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="#e9bc10"
-                                style="cursor: pointer;">
+                            <v-avatar 
+                                rounded 
+                                size="small" 
+                                v-bind="props" 
+                                class="mr-1" 
+                                @click="openDeleteDialog(item)"
+                                :class="isHovering ? 'elevation-12' : 'elevation-2'" 
+                                color="#e9bc10"
+                                style="cursor: pointer;"
+                            >
                                 <v-icon size="18" color="white" icon="mdi-trash-can-outline"></v-icon>
                             </v-avatar>
                         </v-hover>
@@ -45,11 +60,25 @@
             </v-col>
         </v-row>
 
-        <addType :visible="dialog" @close="dialog = false" @save="addCareof" :title="dialog_title" />
-        <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue"
-            @delete="deleteCareof" />
-        <editType :visible="edit_dialog" @close="edit_dialog = false" @save="editCareOfValue" :title="edit_dialog_title"
-            :type="edit_value" />
+        <addType 
+            :visible="dialog" 
+            @close="closeAddDialog" 
+            @save="addCareof" 
+            :title="dialog_title" 
+        />
+        <deleteWarnVue 
+            :visible="delete_dialog" 
+            @close="closeDeleteDialog" 
+            :item="deleteValue"
+            @delete="deleteCareof" 
+        />
+        <editType 
+            :visible="edit_dialog" 
+            @close="closeEditDialog" 
+            @save="editCareOfValue" 
+            :title="edit_dialog_title"
+            :type="edit_value" 
+        />
     </v-container>
 </template>
 
@@ -89,15 +118,39 @@ export default {
         ...mapState('servicetype', ['ServiceRequestType']),
     },
     methods: {
-        ...mapActions('servicetype', ['GET_SERVICEREQUESTTYPE', 'ADD_SERVICEREQUESTTYPE', 'DELETE_SERVICEREQUESTTYPE', 'EDIT_SERVICEREQUESTTYPE']),
+        ...mapActions('servicetype', [
+            'GET_SERVICEREQUESTTYPE', 
+            'ADD_SERVICEREQUESTTYPE', 
+            'DELETE_SERVICEREQUESTTYPE', 
+            'EDIT_SERVICEREQUESTTYPE'
+        ]),
+
+        handleButtonAction() {
+            this.dialog = true;
+        },
+
+        closeAddDialog() {
+            this.dialog = false;
+        },
+
+        closeDeleteDialog() {
+            this.delete_dialog = false;
+            this.deleteValue = {};
+        },
+
+        closeEditDialog() {
+            this.edit_dialog = false;
+            this.edit_value = '';
+            this.edit_id = '';
+        },
 
         async addCareof(item) {
             try {
                 await this.ADD_SERVICEREQUESTTYPE(item);
                 await this.GET_SERVICEREQUESTTYPE();
-                this.dialog = false;
+                this.closeAddDialog();
             } catch (error) {
-                console.error('Error adding care of:', error);
+                console.error('Error adding service request type:', error);
             }
         },
 
@@ -106,16 +159,6 @@ export default {
             this.delete_dialog = true;
         },
 
-        // async deleteCareof() {
-        //     try {
-        //         await this.DELETE_SERVICEREQUESTTYPE(this.deleteValue.id);
-        //         await this.GET_SERVICEREQUESTTYPE();
-        //         this.delete_dialog = false;
-        //         this.deleteValue = {};
-        //     } catch (error) {
-        //         console.error('Error deleting care of:', error);
-        //     }
-        // },
         async deleteCareof() {
             try {
                 if (!this.deleteValue || !this.deleteValue.id) {
@@ -125,13 +168,11 @@ export default {
 
                 await this.DELETE_SERVICEREQUESTTYPE({ id: this.deleteValue.id });
                 await this.GET_SERVICEREQUESTTYPE();
-                this.delete_dialog = false;
-                this.deleteValue = {};
+                this.closeDeleteDialog();
             } catch (error) {
-                console.error('Error deleting care of:', error);
+                console.error('Error deleting service request type:', error);
             }
         },
-
 
         openEditDialog(item) {
             this.edit_value = item.type;
@@ -147,11 +188,9 @@ export default {
             try {
                 await this.EDIT_SERVICEREQUESTTYPE(payload);
                 await this.GET_SERVICEREQUESTTYPE();
-                this.edit_dialog = false;
-                this.edit_value = '';
-                this.edit_id = '';
+                this.closeEditDialog();
             } catch (error) {
-                console.error('Error editing care of:', error);
+                console.error('Error editing service request type:', error);
             }
         }
     },
@@ -160,7 +199,6 @@ export default {
     }
 }
 </script>
-
 <style scoped>
 .breadcrumbs-container {
     background: linear-gradient(90deg, #4d90fe, #285bc7);
