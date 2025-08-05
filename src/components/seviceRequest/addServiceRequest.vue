@@ -238,7 +238,7 @@ export default {
     },
     visible(val) {
       if (val && this.prefillData) {
-        console.log('Prefill Data Received:', this.prefillData);
+        // console.log('Prefill Data Received:', this.prefillData);
         this.prefillForm();
       } else if (!val) {
         this.resetForm();
@@ -252,13 +252,13 @@ export default {
     },
 
     ServiceRequest(newValue, oldValue) {
-    if (newValue !== oldValue) {
-      const selected = this.ServiceTypeList.find(item => item.id === newValue);
-      if (!selected || (selected.type !== 'Service' && selected.type !== 'Application')) {
-        this.RequestType = null;
+      if (newValue !== oldValue) {
+        const selected = this.ServiceTypeList.find(item => item.id === newValue);
+        if (!selected || (selected.type !== 'Service' && selected.type !== 'Application')) {
+          this.RequestType = null;
+        }
       }
-    }
-  },
+    },
   },
   computed: {
     ...mapState('callHandle', ['callhandelList']),
@@ -330,11 +330,29 @@ export default {
       this.v$.$reset();
     },
 
+    // async prefillForm() {
+    //   this.client = this.prefillData.clientId || null;
+    //   this.city = this.prefillData.city || null;
+    //   this.equipment = this.prefillData.equipmentId || null;
+    //   this.sale = this.prefillData.saleId || null;
+    //   this.description = this.prefillData.maintenancePeriod
+    //     ? `Preventive Maintenance Due: ${this.formatDate(this.prefillData.maintenancePeriod)}`
+    //     : '';
+
+    //   // Use $nextTick to ensure v-models are updated before async calls
+    //   await this.$nextTick();
+
+    //   if (this.client) {
+    //     await this.setCity(true); // Pass true to indicate prefill, so it doesn't clear saleList immediately
+    //     if (this.equipment) {
+    //       await this.setSerialNo(true); // Pass true to indicate prefill
+    //     }
+    //   }
+    // },
     async prefillForm() {
+      // Set basic fields first
       this.client = this.prefillData.clientId || null;
       this.city = this.prefillData.city || null;
-      this.equipment = this.prefillData.equipmentId || null;
-      this.sale = this.prefillData.saleId || null;
       this.description = this.prefillData.maintenancePeriod
         ? `Preventive Maintenance Due: ${this.formatDate(this.prefillData.maintenancePeriod)}`
         : '';
@@ -343,13 +361,70 @@ export default {
       await this.$nextTick();
 
       if (this.client) {
-        await this.setCity(true); // Pass true to indicate prefill, so it doesn't clear saleList immediately
-        if (this.equipment) {
-          await this.setSerialNo(true); // Pass true to indicate prefill
+        try {
+          // First, set city and load client equipment data
+          await this.setCity(true); // Pass true to indicate prefill
+
+          // Wait for client data to be loaded
+          await this.$nextTick();
+
+          // Now set equipment after client data is available
+          if (this.prefillData.equipmentId && this.editClientValue.equipments) {
+            // Find the equipment in the client's equipment list
+            const matchingEquipment = this.editClientValue.equipments.find(
+              eq => eq.id === this.prefillData.equipmentId
+            );
+
+            if (matchingEquipment) {
+              this.equipment = this.prefillData.equipmentId;
+              console.log('Equipment set to:', this.equipment);
+
+              // Wait for equipment to be set, then load serial numbers
+              await this.$nextTick();
+
+              if (this.equipment) {
+                await this.setSerialNo(true); // Pass true to indicate prefill
+              }
+            } else {
+              console.warn('Equipment not found in client equipment list');
+            }
+          }
+        } catch (error) {
+          console.error('Error in prefillForm:', error);
         }
       }
     },
 
+    // async setCity(isPrefill = false) {
+    //   if (!isPrefill) { // Only reset if not prefilling
+    //     this.equipment = null;
+    //     this.sale = null;
+    //     this.saleList = [];
+    //   }
+
+    //   if (this.client) {
+    //     try {
+    //       const clnt = this.$store.getters['clients/getClientById'](this.client);
+    //       this.city = clnt?.city?.city || this.prefillData?.city || null;
+    //       const payload = { id: this.client };
+    //       await this.GET_CLIENT_BY_ID(payload);
+    //       await this.GET_ALL_SALE_EQUIPMENT(); // This fetches all, later filtered
+    //       // console.log('Client and Equipment data updated for client ID:', this.client);
+    //     } catch (error) {
+    //       console.error('Error setting city and equipment:', error);
+    //       this.city = null;
+    //       this.equipment = null;
+    //       this.sale = null;
+    //       this.saleList = [];
+    //       this.$emit('error', 'Failed to load client details. Please try again.');
+    //     }
+    //   } else {
+    //     this.city = null;
+    //     this.equipment = null;
+    //     this.sale = null;
+    //     this.saleList = [];
+    //   }
+    // },
     async setCity(isPrefill = false) {
       if (!isPrefill) { // Only reset if not prefilling
         this.equipment = null;
@@ -365,19 +440,27 @@ export default {
           await this.GET_CLIENT_BY_ID(payload);
           await this.GET_ALL_SALE_EQUIPMENT(); // This fetches all, later filtered
           console.log('Client and Equipment data updated for client ID:', this.client);
+
+          // Wait for the client data to be updated in the store
+          await this.$nextTick();
+
         } catch (error) {
           console.error('Error setting city and equipment:', error);
           this.city = null;
-          this.equipment = null;
-          this.sale = null;
-          this.saleList = [];
+          if (!isPrefill) {
+            this.equipment = null;
+            this.sale = null;
+            this.saleList = [];
+          }
           this.$emit('error', 'Failed to load client details. Please try again.');
         }
       } else {
         this.city = null;
-        this.equipment = null;
-        this.sale = null;
-        this.saleList = [];
+        if (!isPrefill) {
+          this.equipment = null;
+          this.sale = null;
+          this.saleList = [];
+        }
       }
     },
 
@@ -538,7 +621,7 @@ export default {
         this.GET_ALL_SALE_EQUIPMENT(), // Fetch all sale equipment on creation
         this.GET_REQUESTTYPE(),
       ]);
-      console.log('Initial data fetched successfully.');
+      // console.log('Initial data fetched successfully.');
       if (this.prefillData) {
         this.prefillForm();
       }

@@ -423,12 +423,12 @@ export default {
       // applyFilters will be called automatically by Vue's reactivity
       // as computed properties depend on searchQuery.
     },
-    applyFilters() {
-      // Re-evaluating computed properties happens automatically when
-      // `selectedClient`, `selectedEquipment`, `selectedCity`, `selectedSerialNo`, `selectedDayRange` change.
-      // Calling this method just ensures a re-evaluation if needed explicitly.
-      this.logFilteredData(); // For debugging purposes
-    },
+    // applyFilters() {
+    //   // Re-evaluating computed properties happens automatically when
+    //   // `selectedClient`, `selectedEquipment`, `selectedCity`, `selectedSerialNo`, `selectedDayRange` change.
+    //   // Calling this method just ensures a re-evaluation if needed explicitly.
+    //   this.logFilteredData(); // For debugging purposes
+    // },
     resetFilters() {
       this.searchQuery = '';
       this.selectedClient = null;
@@ -463,22 +463,41 @@ export default {
       this.prefillData = null; // Clear any previous prefill data
       this.showAddServiceDialog = true;
     },
+    // goToServiceRequest(id) {
+    //   const item = this.preventiveList.find(item => item.id === id);
+    //   if (item) {
+    //     this.prefillData = {
+    //       clientId: item.sale?.client?.id || '',
+    //       city: item.sale?.client?.city?.city || '',
+    //       equipmentId: item.sale?.equipment?.equipmentName || '',
+    //       serialNo: item.sale?.serialNo || '',
+    //       saleId: item.sale?.id || '',
+    //       maintenancePeriod: item.maintenancePeriod || '',
+    //     };
+    //     console.log('Prefill Data for Service Request:', this.prefillData);
+    //     this.showAddServiceDialog = true;
+    //   } else {
+    //     console.error('Item not found for ID:', id);
+    //   }
+    // },
     goToServiceRequest(id) {
-      const item = this.preventiveList.find(item => item.id === id);
-      if (item) {
-        this.prefillData = {
-          clientId: item.sale?.client?.id || '',
-          city: item.sale?.client?.city?.city || '',
-          equipmentId: item.sale?.equipment?.id || '',
-          saleId: item.sale?.id || '',
-          maintenancePeriod: item.maintenancePeriod || '',
-        };
-        console.log('Prefill Data for Service Request:', this.prefillData);
-        this.showAddServiceDialog = true;
-      } else {
-        console.error('Item not found for ID:', id);
-      }
-    },
+  const item = this.preventiveList.find(item => item.id === id);
+  if (item) {
+    this.prefillData = {
+      clientId: item.sale?.client?.id || '',
+      city: item.sale?.client?.city?.city || '',
+      equipmentId: item.sale?.equipment?.id || '', // Pass equipment ID instead of name
+      equipmentName: item.sale?.equipment?.equipmentName || '', // Also pass name for reference
+      serialNo: item.sale?.serialNo || '',
+      saleId: item.sale?.id || '',
+      maintenancePeriod: item.maintenancePeriod || '',
+    };
+    console.log('Prefill Data for Service Request:', this.prefillData);
+    this.showAddServiceDialog = true;
+  } else {
+    console.error('Item not found for ID:', id);
+  }
+},
     handleSaveServiceRequest(payload) {
       console.log('Service Request Saved:', payload);
       this.showAddServiceDialog = false;
@@ -486,23 +505,23 @@ export default {
       // After saving, refresh the preventive list to show updated data
       this.GET_PREVENTIVE_LIST();
     },
-    logPreventiveListStructure() {
-      console.log('Preventive List Structure:', {
-        type: typeof this.preventiveList,
-        isArray: Array.isArray(this.preventiveList),
-        length: this.preventiveList?.length || 0,
-        sample: this.preventiveList?.slice(0, 2),
-      });
-    },
-    logFilteredData() {
-      console.log('Filtered Data Counts:', {
-        'All Data (after filters)': this.filteredList.length,
-        '0-30 Days': this.range0to30.length,
-        '30-60 Days': this.range30to60.length,
-        '60-90 Days': this.range60to90.length,
-        '90+ Days': this.range90plus.length,
-      });
-    },
+    //logPreventiveListStructure() {
+      // console.log('Preventive List Structure:', {
+      //   type: typeof this.preventiveList,
+      //   isArray: Array.isArray(this.preventiveList),
+      //   length: this.preventiveList?.length || 0,
+      //   sample: this.preventiveList?.slice(0, 2),
+      // });
+    //},
+    // logFilteredData() {
+    //   console.log('Filtered Data Counts:', {
+    //     'All Data (after filters)': this.filteredList.length,
+    //     '0-30 Days': this.range0to30.length,
+    //     '30-60 Days': this.range30to60.length,
+    //     '60-90 Days': this.range60to90.length,
+    //     '90+ Days': this.range90plus.length,
+    //   });
+    // },
   },
   async mounted() {
     try {
@@ -513,8 +532,8 @@ export default {
         this.GET_CLIENT_LIST(),
       ]);
       this.$nextTick(() => {
-        this.logPreventiveListStructure();
-        this.logFilteredData();
+        // this.logPreventiveListStructure();
+        // this.logFilteredData();
       });
     } catch (error) {
       console.error('Error during mounted:', error);

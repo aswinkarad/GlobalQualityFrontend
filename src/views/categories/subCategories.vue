@@ -20,14 +20,27 @@
       SUB CATEGORIES
     </div>
 
-    <searchAndFilterToolbar :btn_text="cl_text" :show-button="showToolbar" :show-filter-icon="false"
-      @btn_action="dialog = true" @fiterWithName="filterEqu_clName" class="toolbar" />
+    <searchAndFilterToolbar 
+      :btn_text="cl_text" 
+      :show-button="showToolbar" 
+      :show-filter-icon="false"
+      :placeholder="'Search Sub Categories'"
+      :auto="true"
+      @btn_action="dialog = true" 
+      @fiterWithName="filterEqu_clName" 
+      @search="filterEqu_clName"
+      class="toolbar" 
+    />
     <addCat :visible="dialog" @close="dialog = false" @save="addSubCategory" :title="dialog_title"
       class="dialog-animation" />
 
     <div class="mt-8 category-cards">
-      <categoryCard @clickOnCard="toEquipment" :cat="subCategoryList" @delteItem="deleteSubCat"
-        @editItem="editSubCat" />
+      <categoryCard 
+        @clickOnCard="toEquipment" 
+        :cat="filteredSubCategories" 
+        @delteItem="deleteSubCat"
+        @editItem="editSubCat" 
+      />
     </div>
     <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false"
       class="snackbar-animation" />
@@ -59,6 +72,8 @@ export default {
       snackColor: '',
       showToolbar: false,
       sub_text: 'Add Sub Category',
+      searchQuery: '',
+      filteredSubCategories: [],
       bread: [
         {
           text: 'Home',
@@ -101,14 +116,25 @@ export default {
       }
     },
     filterEqu_clName(val) {
+      this.searchQuery = val || '';
+      // Client-side filtering for immediate feedback
+      if (!this.searchQuery) {
+        this.filteredSubCategories = this.subCategoryList;
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        this.filteredSubCategories = this.subCategoryList.filter(subCat =>
+          subCat.subcategoryName.toLowerCase().includes(query)
+        );
+      }
+      // Server-side filtering
       const payload = {
-        search: val,
+        search: this.searchQuery,
         size: 15,
         page: 1,
+        cat_name: this.$route.params.cat_name, // Include category name from route params
       };
       this.GET_SUB_CATEGORY(payload);
     },
-
     toEquipment(item) {
       this.$router.push({ name: 'subEquipment', params: { sub_name: item.subcategoryName, id: item.id } });
     },
@@ -142,6 +168,12 @@ export default {
         this.snackbar = true;
         this.GET_SUB_CATEGORY(this.$route.params);
       });
+    },
+  },
+  watch: {
+    subCategoryList(newList) {
+      this.filteredSubCategories = newList;
+      this.filterEqu_clName(this.searchQuery);
     },
   },
   mounted() {

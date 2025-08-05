@@ -125,7 +125,7 @@ export default {
         }
     },
         async GET_CLIENT_BY_ID({ commit, state }, payload){
-             console.log(payload)
+            //  console.log(payload)
             try {
                 const auth = JSON.parse(localStorage.getItem('user'));
                 const clientWithId = await axios({

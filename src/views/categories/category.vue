@@ -20,13 +20,14 @@
       CATEGORIES
     </div>
 
-    <searchAndFilterToolbar :btn_text="cl_text" :show-button="showToolbar" @btn_action="dialog = true"
+    <searchAndFilterToolbar :btn_text="cl_text" :show-button="showToolbar" :placeholder="'Search Categories'"
+      :auto="true" @btn_action="dialog = true" @search="filterCategories" @fiterWithName="filterCategories"
       class="toolbar" />
     <addCat :visible="dialog" @close="dialog = false" @save="addCategory" :title="dialog_title"
       class="dialog-animation" />
 
     <div class="mt-8 category-cards">
-      <categorycard @clickOnCard="toSubCat" :cat="categoryList" @delteItem="deleteCat" @editItem="editCat" />
+      <categorycard @clickOnCard="toSubCat" :cat="filteredCategories" @delteItem="deleteCat" @editItem="editCat" />
     </div>
     <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false"
       class="snackbar-animation" />
@@ -53,6 +54,8 @@ export default {
       cat_text: null,
       showToolbar: false,
       userName: '',
+      searchQuery: '',
+      filteredCategories: [],
       breadcrumbs: [
         { text: 'Home', disabled: false, href: '/' },
         { text: 'Categories', disabled: true, href: '/categories' },
@@ -128,6 +131,23 @@ export default {
       await this.UPDATE_CATEGORY(cat);
       await this.GET_ALL_CATEGORY();
     },
+    filterCategories(searchText) {
+      this.searchQuery = searchText || '';
+      if (!this.searchQuery) {
+        this.filteredCategories = this.categoryList;
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        this.filteredCategories = this.categoryList.filter(cat =>
+          cat.categoryName.toLowerCase().includes(query)
+        );
+      }
+    },
+  },
+  watch: {
+    categoryList(newList) {
+      this.filteredCategories = newList;
+      this.filterCategories(this.searchQuery);
+    },
   },
   mounted() {
     this.isAdmin();
@@ -140,6 +160,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Base Container Styling */

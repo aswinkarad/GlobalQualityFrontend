@@ -50,7 +50,7 @@ export default {
         const { data } = await axios(options);
         commit('SET_SALE_EQUIPMENTS', data.data);
         commit('SET_SALE_EQUIMENT_TOTAL_PAGE', data.totalPages);
-        console.log(data);
+        // console.log(data);
         
         return data;
       } catch (error) {
@@ -254,6 +254,8 @@ export default {
         });
 
         commit('SET_SALE_EQUIPMENT_BY_EQUIPMENT_ID_AND_CLIENT_ID', response.data.data);
+        console.log(response.data);
+        
         return response.data;
       } catch (error) {
         console.error('Error fetching sale equipment by equipment and client ID:', error);

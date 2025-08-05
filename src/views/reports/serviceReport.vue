@@ -246,47 +246,90 @@ export default {
             }
         },
 
+        // async filterService() {
+        //     const query = {
+        //         clientid: this.clientName || '',
+        //         sid: this.machineId || '',
+        //         statid: this.workingStatusId || '',
+        //         // cityid: this.cityId || '',
+        //         city: this.availableCities.find(c => c.id === this.cityId)?.city || '',
+        //         startdte: this.startDate || '',
+        //         enddte: this.endDate || '',
+        //         size: 10,
+        //         page: 1
+        //     };
+        //     try {
+        //         await this.GET_SERVICE_LIST(query);
+        //         if (!this.isInitialLoad) {
+        //             await this.loadCities();
+        //         }
+        //         this.isInitialLoad = false;
+        //     } catch (error) {
+        //         console.error('Error filtering services:', error);
+        //     }
+        // },
         async filterService() {
-            const query = {
-                clientid: this.clientName || '',
-                sid: this.machineId || '',
-                statid: this.workingStatusId || '',
-                // cityId: this.cityId || '',
-                city: this.availableCities.find(c => c.id === this.cityId)?.city || '',
-                startdte: this.startDate || '',
-                enddte: this.endDate || '',
-                size: 10,
-                page: 1
-            };
-            try {
-                await this.GET_SERVICE_LIST(query);
-                if (!this.isInitialLoad) {
-                    await this.loadCities();
-                }
-                this.isInitialLoad = false;
-            } catch (error) {
-                console.error('Error filtering services:', error);
-            }
-        },
+    const query = {
+        clientid: this.clientName || '',
+        sid: this.machineId || '',
+        statid: this.workingStatusId || '',
+        cityid: this.cityId || '', // Only send city ID
+        startdte: this.startDate || '',
+        enddte: this.endDate || '',
+        size: 10,
+        page: 1
+    };
+    
+    console.log('Filter query being sent:', query);
+    
+    try {
+        await this.GET_SERVICE_LIST(query);
+        if (!this.isInitialLoad) {
+            await this.loadCities();
+        }
+        this.isInitialLoad = false;
+    } catch (error) {
+        console.error('Error filtering services:', error);
+    }
+},
 
-        async changePage(page) {
-            const query = {
-                clientid: this.clientName || '',
-                sid: this.machineId || '',
-                statid: this.workingStatusId || '',
-                cityId: this.cityId || '',
-                startdte: this.startDate || '',
-                enddte: this.endDate || '',
-                page: page,
-                size: 10
-            };
-            try {
-                await this.GET_SERVICE_LIST(query);
-            } catch (error) {
-                console.error('Error changing page:', error);
-            }
-        },
-
+        // async changePage(page) {
+        //     const query = {
+        //         clientid: this.clientName || '',
+        //         sid: this.machineId || '',
+        //         statid: this.workingStatusId || '',
+        //         cityid: this.cityId || '',
+        //         startdte: this.startDate || '',
+        //         enddte: this.endDate || '',
+        //         page: page,
+        //         size: 10
+        //     };
+        //     try {
+        //         await this.GET_SERVICE_LIST(query);
+        //     } catch (error) {
+        //         console.error('Error changing page:', error);
+        //     }
+        // },
+async changePage(page) {
+    const query = {
+        clientid: this.clientName || '',
+        sid: this.machineId || '',
+        statid: this.workingStatusId || '',
+        cityid: this.cityId || '', // Only send city ID
+        startdte: this.startDate || '',
+        enddte: this.endDate || '',
+        page: page,
+        size: 10
+    };
+    
+    console.log('Pagination query being sent:', query);
+    
+    try {
+        await this.GET_SERVICE_LIST(query);
+    } catch (error) {
+        console.error('Error changing page:', error);
+    }
+},
         toCSV() {
             const data = this.serviceList.map(el => ({
                 'EQUIPMENT NAME': el.sale?.equipment?.equipmentName || 'N/A',
@@ -328,7 +371,7 @@ export default {
                 clientid: this.clientName || '',
                 sid: this.machineId || '',
                 statid: this.workingStatusId || '',
-                cityId: this.cityId || '',
+                cityid: this.cityId || '',
                 startdte: this.startDate || '',
                 enddte: this.endDate || '',
                 size: 1000000

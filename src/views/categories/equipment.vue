@@ -19,8 +19,17 @@
       EQUIPMENTS
     </div>
 
-    <searchAndFilterToolbar :btn_text="cl_text" :show-button="showToolbar" :show-filter-icon="false"
-      @btn_action="dialog = true" class="toolbar" />
+    <searchAndFilterToolbar 
+      :btn_text="cl_text" 
+      :show-button="showToolbar" 
+      :show-filter-icon="false"
+      :placeholder="'Search Equipments'"
+      :auto="true"
+      @btn_action="dialog = true" 
+      @fiterWithName="filterEquipment"
+      @search="filterEquipment"
+      class="toolbar" 
+    />
 
     <v-table class="modern-table rounded-lg mt-8">
       <thead>
@@ -29,12 +38,11 @@
           <th class="text-left">Name</th>
           <th class="text-left">Model Number</th>
           <th class="text-left">Image</th>
-          <!-- <th class="text-left">Warranty Status</th> -->
           <th v-if="showToolbar" class="text-left">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, i) in equipmentListAll" :key="item.name" class="table-row-hover">
+        <tr v-for="(item, i) in filteredEquipmentList" :key="item.name" class="table-row-hover">
           <td>{{ i + 1 }}</td>
           <td>{{ item.equipmentName }}</td>
           <td>{{ item.model }}</td>
@@ -43,7 +51,6 @@
               <img height="80" width="110" :src="item.equipmentImage" alt="" class="equipment-image" />
             </div>
           </td>
-          <!-- <td :style="{ color: item.warranty_status.status === 'Yes' ? 'green' : 'red' }">{{ item.warranty_status.status }}</td> -->
           <td v-if="showToolbar">
             <v-hover v-slot="{ isHovering, props }">
               <v-btn icon size="small" v-bind="props" class="mr-1" @click="openEditDialog(item)"
@@ -107,6 +114,8 @@ export default {
       edit_value: {},
       deleteValue: {},
       showToolbar: false,
+      searchQuery: '',
+      filteredEquipmentList: [],
       bread: [
         { text: 'Home', disabled: false, exact: true, to: '/' },
         { text: 'Categories', disabled: false, exact: true, to: { name: 'category' } },
@@ -131,6 +140,29 @@ export default {
         }
       }
     },
+    filterEquipment(searchText) {
+      this.searchQuery = searchText || '';
+      // Client-side filtering for immediate feedback
+      if (!this.searchQuery) {
+        this.filteredEquipmentList = this.equipmentListAll;
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        this.filteredEquipmentList = this.equipmentListAll.filter(item =>
+          item.equipmentName.toLowerCase().includes(query) || 
+          item.model.toLowerCase().includes(query)
+        );
+      }
+      // Server-side filtering
+      const payload = {
+        params: this.$route.params,
+        query: {
+          page: 1,
+          size: 15,
+          search: this.searchQuery,
+        },
+      };
+      this.GET_EQUIPMENT(payload);
+    },
     async addEquipment(payload) {
       payload.id = this.$route.params.id;
       await this.ADD_EQUIPMENT(payload).then(() => {
@@ -148,7 +180,15 @@ export default {
       });
     },
     getEquipment() {
-      this.GET_EQUIPMENT(this.$route.params);
+      const payload = {
+        params: this.$route.params,
+        query: {
+          page: 1,
+          size: 15,
+          search: this.searchQuery,
+        },
+      };
+      this.GET_EQUIPMENT(payload);
     },
     openDeleteDialog(item) {
       this.deleteValue = item;
@@ -188,15 +228,21 @@ export default {
       });
     },
     changePage(page) {
-      const params = this.$route.params;
       const payload = {
-        params,
+        params: this.$route.params,
         query: {
           page: page,
           size: 15,
+          search: this.searchQuery,
         },
       };
       this.GET_EQUIPMENT(payload);
+    },
+  },
+  watch: {
+    equipmentListAll(newList) {
+      this.filteredEquipmentList = newList;
+      this.filterEquipment(this.searchQuery);
     },
   },
   mounted() {
