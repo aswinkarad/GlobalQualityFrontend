@@ -6,11 +6,7 @@
                 <v-icon color="white">mdi-chevron-right</v-icon>
             </template>
             <template v-slot:item="{ item }">
-                <v-breadcrumbs-item 
-                    :href="item.href" 
-                    :disabled="item.disabled" 
-                    class="custom-breadcrumb-item"
-                >
+                <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="custom-breadcrumb-item">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </template>
@@ -24,22 +20,13 @@
             <div class="mt-4 mb-2">
                 <v-row>
                     <v-col cols="12" md="10">
-                        <v-text-field 
-                            v-model="searchQuery" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            placeholder="Search Technicians"
-                            prepend-inner-icon="mdi-magnify"
-                            @input="filterTechnicians"
-                        ></v-text-field>
+                        <v-text-field v-model="searchQuery" hide-details variant="outlined" density="comfortable"
+                            placeholder="Search Technicians" prepend-inner-icon="mdi-magnify"
+                            @input="filterTechnicians"></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2" style="align-self: center;">
                         <div class="d-flex justify-end">
-                            <v-btn 
-                                style="background: rgb(4 43 76);" 
-                                @click="dialog = true"
-                            >
+                            <v-btn style="background: rgb(4 43 76);" @click="dialog = true">
                                 <span style="color: white">Add Technician</span>
                             </v-btn>
                         </div>
@@ -199,23 +186,25 @@ export default {
             }
         },
 
+        // Fixed changePage method - now works like admin.vue (client-side filtering only)
         changePage(page) {
             const query = {
                 page: page,
-                size: 15,
-                search: this.searchQuery || ''
+                size: 15
+                // Removed search parameter - we'll handle filtering client-side
             };
             this.GET_TECH_LIST(query).then(() => {
                 this.filterTechnicians();
             });
         },
 
+        // Fixed filterTechnicians method - now works exactly like admin.vue
         filterTechnicians() {
             if (this.searchQuery) {
                 this.filteredTechList = this.techList.filter(tech =>
                     tech.username.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                     tech.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                    tech.mobile.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    (tech.mobile && tech.mobile.toLowerCase().includes(this.searchQuery.toLowerCase()))
                 );
             } else {
                 this.filteredTechList = [...this.techList];
@@ -244,7 +233,7 @@ export default {
 }
 
 .breadcrumbs-container {
-  background: linear-gradient(90deg, #4d90fe, #285bc7);
+    background: linear-gradient(90deg, #4d90fe, #285bc7);
     border-radius: 8px;
     padding: 10px 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

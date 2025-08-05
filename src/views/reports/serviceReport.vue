@@ -29,48 +29,14 @@
                             :items="availableCities" item-title="city" item-value="id" clearable label="City"
                             @click="loadCities" @update:modelValue="filterService"></v-autocomplete>
                     </v-col>
-                    <!-- <v-col cols="12" md="2">
-                        <v-autocomplete 
-                            v-model="machineId" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            :items="mechine || []" 
-                            :item-title="test" 
-                            item-value="id" 
-                            clearable 
-                            label="Machine (Serial No)"
-                            @click="getClientMechines()"
-                            @update:modelValue="filterService"
-                        ></v-autocomplete>
-                    </v-col> -->
+                  
+
                     <v-col cols="12" md="2">
                         <v-autocomplete v-model="workingStatusId" hide-details variant="outlined" density="comfortable"
                             :items="statuses" item-title="name" item-value="id" clearable label="Status"
                             @update:modelValue="filterService"></v-autocomplete>
                     </v-col>
-                    <!-- <v-col cols="12" md="2">
-                        <v-text-field 
-                            v-model="startDate" 
-                            label="Start Date" 
-                            type="date" 
-                            variant="outlined"
-                            density="comfortable" 
-                            clearable
-                            @update:modelValue="filterService"
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field 
-                            v-model="endDate" 
-                            label="End Date" 
-                            type="date" 
-                            variant="outlined"
-                            density="comfortable" 
-                            clearable
-                            @update:modelValue="filterService"
-                        ></v-text-field>
-                    </v-col> -->
+
                     <v-col cols="12" md="2" style="align-self: center;">
                         <div class="d-flex justify-end">
                             <v-btn style="background: rgb(4 43 76);" @click="filterService">
@@ -285,7 +251,8 @@ export default {
                 clientid: this.clientName || '',
                 sid: this.machineId || '',
                 statid: this.workingStatusId || '',
-                cityid: this.cityId || '',
+                // cityId: this.cityId || '',
+                city: this.availableCities.find(c => c.id === this.cityId)?.city || '',
                 startdte: this.startDate || '',
                 enddte: this.endDate || '',
                 size: 10,
@@ -307,7 +274,7 @@ export default {
                 clientid: this.clientName || '',
                 sid: this.machineId || '',
                 statid: this.workingStatusId || '',
-                cityid: this.cityId || '',
+                cityId: this.cityId || '',
                 startdte: this.startDate || '',
                 enddte: this.endDate || '',
                 page: page,
@@ -320,21 +287,6 @@ export default {
             }
         },
 
-        // toCSV() {
-        //     this.json_data = this.serviceList.map(el => ({
-        //         'EQUIPMENT NAME': el.sale?.equipment?.equipmentName || 'N/A',
-        //         'CLIENT NAME': el.sale?.client?.name || 'N/A',
-        //         'CITY': el.sale?.client?.city?.city || 'N/A',
-        //         'CALL HANDLE': el.call_handle?.callHandle || 'N/A',
-        //         'WORKING STATUS': el.workingcondition?.workingCondition || 'N/A',
-        //         'SERIAL NUMBER': el.sale?.serialNo || 'N/A',
-        //         'CALL REGISTRATION DATE': el.callRegisterDate?.split('T')[0] || 'N/A',
-        //         'PRIORITY': el.priority?.priority || 'N/A',
-        //         'TECHNICIAN': el.user ? el.user.username : 'N/A',
-        //         'STATUS': el.working_status?.workingStatus || 'N/A',
-        //         'CREATED AT': this.formatDate(el.createdAt),
-        //     }));
-        // },
         toCSV() {
             const data = this.serviceList.map(el => ({
                 'EQUIPMENT NAME': el.sale?.equipment?.equipmentName || 'N/A',
@@ -376,7 +328,7 @@ export default {
                 clientid: this.clientName || '',
                 sid: this.machineId || '',
                 statid: this.workingStatusId || '',
-                cityid: this.cityId || '',
+                cityId: this.cityId || '',
                 startdte: this.startDate || '',
                 enddte: this.endDate || '',
                 size: 1000000

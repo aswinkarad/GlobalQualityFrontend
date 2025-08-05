@@ -68,20 +68,11 @@
                   :error-messages="v$.ServiceRequest.$error ? 'Service Type is required' : ''"></v-autocomplete>
               </v-col>
 
-
-              <!-- <v-col cols="12" :sm="isMobile ? 12 : 4">
-                <v-autocomplete color="#7b1fa2" variant="outlined" density="compact" v-model="RequestType" clearable
-                  :items="RequestTypeList" item-title="type" item-value="id" label="Request Type" class="custom-field"
-                  prepend-inner-icon="mdi-service-toolbox" hide-details
-                 ></v-autocomplete>
-              </v-col> -->
               <v-col cols="12" :sm="isMobile ? 12 : 4" v-if="showRequestTypeField">
                 <v-autocomplete color="#7b1fa2" variant="outlined" density="compact" v-model="RequestType" clearable
                   :items="RequestTypeList" item-title="type" item-value="id" label="Request Type" class="custom-field"
                   prepend-inner-icon="mdi-service-toolbox" hide-details></v-autocomplete>
               </v-col>
-
-
 
               <v-col cols="12" :sm="isMobile ? 12 : 4">
                 <v-text-field color="#7b1fa2" label="Service By" density="compact" v-model="service_by"

@@ -535,41 +535,7 @@ export default {
       const ext = url.toLowerCase().split('.').pop();
       return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'].includes(ext);
     },
-    // The handleDownload method is now redundant as `target="_blank"` on the `v-btn`'s href handles direct downloads.
-    // However, if you need to perform additional logic (e.g., track downloads, add authentication headers),
-    // you would uncomment and implement it, then call it from the @click event.
-    /*
-    async handleDownload(url) {
-      if (!url) {
-        this.mssg = 'No document URL provided for download.';
-        this.snackColor = 'error';
-        this.snackbar = true;
-        return;
-      }
-      // Example of a more complex download if needed:
-      // try {
-      //   const response = await fetch(url, { headers: { 'Authorization': 'Bearer YOUR_TOKEN' } });
-      //   if (!response.ok) throw new Error('Network response was not ok.');
-      //   const blob = await response.blob();
-      //   const downloadUrl = window.URL.createObjectURL(blob);
-      //   const link = document.createElement('a');
-      //   link.href = downloadUrl;
-      //   link.setAttribute('download', url.substring(url.lastIndexOf('/') + 1)); // Use filename from URL
-      //   document.body.appendChild(link);
-      //   link.click();
-      //   link.remove();
-      //   window.URL.revokeObjectURL(downloadUrl);
-      //   this.mssg = 'Download started successfully!';
-      //   this.snackColor = 'success';
-      //   this.snackbar = true;
-      // } catch (error) {
-      //   console.error('Download failed:', error);
-      //   this.mssg = `Download failed: ${error.message}`;
-      //   this.snackColor = 'error';
-      //   this.snackbar = true;
-      // }
-    },
-    */
+   
     ...mapActions('city', ['GET_CITY_LIST']),
     ...mapActions('careof', ['GET_CAREOF_LIST']),
     ...mapActions('clients', ['GET_CLIENT_LIST']),
@@ -705,24 +671,7 @@ export default {
       this.deleteValue = item;
       this.delete_dialog = true;
     },
-    // async deleteSale() {
-    //   try {
-    //     await this.DELETE_SALE_EQUIPMENT(this.deleteValue.id);
-    //     await this.GET_ALL_SALE_EQUIPMENT({ size: 15 });
-    //     this.mssg = 'Equipment deleted successfully';
-    //     this.snackColor = 'success';
-    //     this.snackbar = true;
-    //     this.delete_dialog = false;
-    //     this.deleteValue = {};
-    //     console.log('Deleting sale with ID:', this.deleteValue.id);
-
-    //   } catch (error) {
-    //     console.error('Error in deleteSale:', error);
-    //     this.mssg = error.message || 'Error deleting equipment';
-    //     this.snackColor = 'error';
-    //     this.snackbar = true;
-    //   }
-    // },
+   
     async deleteSale() {
       try {
         await this.DELETE_SALE_EQUIPMENT({ saleId: this.deleteValue.id });
@@ -831,10 +780,11 @@ export default {
       this.equipmentSearchVal = val || '';
       const payload = {
         search: this.equipmentSearchVal,
-        cityid: this.city || '',
+        // cityid: this.city || '',
         size: 15,
         page: 1,
       };
+       console.log('Search payload:', payload);
       this.GET_ALL_SALE_EQUIPMENT(payload);
     },
     filterEquipment() {

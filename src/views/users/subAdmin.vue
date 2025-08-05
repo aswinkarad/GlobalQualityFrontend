@@ -20,22 +20,12 @@
       <div class="mt-4 mb-2">
         <v-row>
           <v-col cols="12" md="10">
-            <v-text-field 
-              v-model="searchQuery" 
-              hide-details 
-              variant="outlined"
-              density="comfortable" 
-              placeholder="Search Sub Admins"
-              prepend-inner-icon="mdi-magnify"
-              @input="filterSubAdmins"
-            ></v-text-field>
+            <v-text-field v-model="searchQuery" hide-details variant="outlined" density="comfortable"
+              placeholder="Search Sub Admins" prepend-inner-icon="mdi-magnify" @input="filterSubAdmins"></v-text-field>
           </v-col>
           <v-col cols="12" md="2" style="align-self: center;">
             <div class="d-flex justify-end">
-              <v-btn 
-                style="background: rgb(4 43 76);" 
-                @click="dialog = true"
-              >
+              <v-btn style="background: rgb(4 43 76);" @click="dialog = true">
                 <span style="color: white">Add Sub Admin</span>
               </v-btn>
             </div>
@@ -61,15 +51,13 @@
           <td>
             <v-hover v-slot="{ isHovering, props }">
               <v-avatar rounded size="small" v-bind="props" class="mr-1" @click="openEditDialog(item)"
-                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="blue-darken-2"
-                style="cursor: pointer;">
+                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="blue-darken-2" style="cursor: pointer;">
                 <v-icon size="18" icon="mdi-pencil-outline"></v-icon>
               </v-avatar>
             </v-hover>
             <v-hover v-slot="{ isHovering, props }">
               <v-avatar rounded size="small" v-bind="props" class="mr-1" @click="openDeleteWarn(item)"
-                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="#e9bc10"
-                style="cursor: pointer;">
+                :class="isHovering ? 'elevation-12' : 'elevation-2'" color="#e9bc10" style="cursor: pointer;">
                 <v-icon size="18" color="white" icon="mdi-trash-can-outline"></v-icon>
               </v-avatar>
             </v-hover>
@@ -260,22 +248,33 @@ export default {
       });
     },
 
-    filterSubAdmins: _.debounce(function () {
-      const query = {
-        page: 1,
-        size: 15,
-        search: this.searchQuery || '',
-      };
-      this.GET_SABADMIN_LIST(query).then(() => {
-        this.filteredSubAdminList = this.subAdminList.filter(item => item && item.id && item.username && item.email);
-      }).catch(error => {
-        this.snackbar = {
-          show: true,
-          text: error.message,
-          type: 'error',
-        };
-      });
-    }, 500),
+    // filterSubAdmins: _.debounce(function () {
+    //   const query = {
+    //     page: 1,
+    //     size: 15,
+    //     search: this.searchQuery || '',
+    //   };
+    //   this.GET_SABADMIN_LIST(query).then(() => {
+    //     this.filteredSubAdminList = this.subAdminList.filter(item => item && item.id && item.username && item.email);
+    //   }).catch(error => {
+    //     this.snackbar = {
+    //       show: true,
+    //       text: error.message,
+    //       type: 'error',
+    //     };
+    //   });
+    // }, 500),
+    filterSubAdmins() {
+      if (this.searchQuery) {
+        this.filteredSubAdminList = this.subAdminList.filter(item =>
+          item.username?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          item.email?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      } else {
+        this.filteredSubAdminList = [...this.subAdminList];
+      }
+    },
+
   },
   watch: {
     subAdminList(newList) {

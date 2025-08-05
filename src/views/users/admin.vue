@@ -6,11 +6,7 @@
                 <v-icon color="white">mdi-chevron-right</v-icon>
             </template>
             <template v-slot:item="{ item }">
-                <v-breadcrumbs-item 
-                    :href="item.href" 
-                    :disabled="item.disabled" 
-                    class="custom-breadcrumb-item"
-                >
+                <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="custom-breadcrumb-item">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </template>
@@ -25,22 +21,13 @@
                 <v-row>
                     <v-col cols="12" md="10">
                         <!-- Assuming searchAndFilterToolbar has a search input -->
-                        <v-text-field 
-                            v-model="searchQuery" 
-                            hide-details 
-                            variant="outlined"
-                            density="comfortable" 
-                            placeholder="Search Admins"
-                            prepend-inner-icon="mdi-magnify"
-                            @input="filterAdmins"
-                        ></v-text-field>
+                        <v-text-field v-model="searchQuery" hide-details variant="outlined" density="comfortable"
+                            placeholder="Search Admins" prepend-inner-icon="mdi-magnify"
+                            @input="filterAdmins"></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2" style="align-self: center;">
                         <div class="d-flex justify-end">
-                            <v-btn 
-                                style="background: rgb(4 43 76);" 
-                                @click="dialog = true"
-                            >
+                            <v-btn style="background: rgb(4 43 76);" @click="dialog = true">
                                 <span style="color: white">Add Admin</span>
                             </v-btn>
                         </div>
@@ -84,28 +71,14 @@
         </v-table>
 
         <div v-if="adminTotalPages > 0">
-            <paginationVue :length="adminTotalPages" @changePage="changePage"/>
+            <paginationVue :length="adminTotalPages" @changePage="changePage" />
         </div>
 
-        <addAdminVue 
-            :visible="dialog" 
-            @close="dialog = false" 
-            @save="addCategory" 
-            :title="dialog_title" 
-        />
-        <addAdminVue 
-            :visible="editDialog" 
-            @close="editDialog = false" 
-            @save="updateAdmin" 
-            :title="editDialog_title" 
-            :item="selectedAdmin"
-        />
-        <deleteWarnVue 
-            :visible="deleteDialog" 
-            @close="deleteDialog = false" 
-            @delete="deleteAdmin" 
-            :item="selectedAdmin"
-        />
+        <addAdminVue :visible="dialog" @close="dialog = false" @save="addCategory" :title="dialog_title" />
+        <addAdminVue :visible="editDialog" @close="editDialog = false" @save="updateAdmin" :title="editDialog_title"
+            :item="selectedAdmin" />
+        <deleteWarnVue :visible="deleteDialog" @close="deleteDialog = false" @delete="deleteAdmin"
+            :item="selectedAdmin" />
     </v-container>
 </template>
 
@@ -230,7 +203,7 @@ export default {
 }
 
 .breadcrumbs-container {
- background: linear-gradient(90deg, #4d90fe, #285bc7);
+    background: linear-gradient(90deg, #4d90fe, #285bc7);
     border-radius: 8px;
     padding: 10px 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

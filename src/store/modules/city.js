@@ -70,7 +70,7 @@ export default {
                     }
     
                 })
-                // console.log(deleteCity)
+                console.log(deleteCity)
 
             } catch (error) {
                 console.log(error)

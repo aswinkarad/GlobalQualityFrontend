@@ -16,7 +16,7 @@
         </div>
         <searchAndFilterToolbar :btn_text="serv_text" :show-button="showToolbar" :auto="true"
             @btn_action="openAddService"
-            :placeholder="'Search with serialNo Client and Equipment Name subject/Required Type/Message'"
+            :placeholder="'Search with serialNo Client and Equipment Name '"
             @fiterWithName="searchSeriveRe" @filterBtn="filterDisplay = !filterDisplay" />
         <Transition name="slide-fade">
             <div class="mt-4 mb-2" v-if="filterDisplay">

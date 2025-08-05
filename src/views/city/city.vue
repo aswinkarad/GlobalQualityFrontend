@@ -6,11 +6,7 @@
                 <v-icon color="white">mdi-chevron-right</v-icon>
             </template>
             <template v-slot:item="{ item }">
-                <v-breadcrumbs-item 
-                    :href="item.href" 
-                    :disabled="item.disabled" 
-                    class="custom-breadcrumb-item"
-                >
+                <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="custom-breadcrumb-item">
                     {{ item.text }}
                 </v-breadcrumbs-item>
             </template>
@@ -19,14 +15,9 @@
         <div class="text-h6 mb-2" style="font-family:'Montserrat', sans-serif !important">
             CITY
         </div>
-        <searchAndFilterToolbar 
-            :btn_text="cl_text" 
-            @btn_action="dialog = true"
-            @search="handleSearch"
-            @filter="handleFilter"
-            @clear="clearFilters"
-        />
-        
+        <searchAndFilterToolbar :btn_text="cl_text" @btn_action="dialog = true" @search="handleSearch"
+            @filter="handleFilter" @clear="clearFilters" />
+
         <!-- Grid Layout for City Cards -->
         <v-row class="mt-4">
             <v-col v-for="(item, i) in displayedCities" :key="item.id" cols="12" sm="6" md="3">
@@ -56,7 +47,8 @@
         <addCityVue :visible="dialog" @close="dialog = false" @save="AddCity" :title="dialog_title" />
         <editCity :visible="edit_dialog" @close="edit_dialog = false" @save="editCityValue" :title="edit_dialog_title"
             :name="edit_value" />
-        <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue" @delete="deleteCity" />
+        <deleteWarnVue :visible="delete_dialog" @close="delete_dialog = false" :item="deleteValue"
+            @delete="deleteCity" />
     </v-container>
 </template>
 
@@ -92,7 +84,7 @@ export default {
             dialog_title: 'Add City',
             delete_dialog: false,
             deleteValue: {},
-            
+
             // Search and Filter functionality
             searchQuery: '',
             filterType: '',
@@ -103,13 +95,13 @@ export default {
     },
     computed: {
         ...mapState('city', ['cityList', 'totalPages']),
-        
+
         displayedCities() {
             // If no search or filter applied, return original cityList
             if (!this.searchQuery && !this.filterType) {
                 return this.cityList || [];
             }
-            
+
             // Return filtered cities
             return this.filteredCities;
         }
@@ -143,7 +135,7 @@ export default {
 
             // Apply search filter
             if (this.searchQuery) {
-                cities = cities.filter(city => 
+                cities = cities.filter(city =>
                     city.city.toLowerCase().includes(this.searchQuery) ||
                     (city.country && city.country.toLowerCase().includes(this.searchQuery)) ||
                     (city.state && city.state.toLowerCase().includes(this.searchQuery))
@@ -157,7 +149,7 @@ export default {
                         // Filter cities added in last 30 days
                         const thirtyDaysAgo = new Date();
                         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                        cities = cities.filter(city => 
+                        cities = cities.filter(city =>
                             city.created_at && new Date(city.created_at) > thirtyDaysAgo
                         );
                         break;
@@ -200,7 +192,8 @@ export default {
 
         async deleteCity() {
             try {
-                await this.DELETE_CITY(this.deleteValue.id);
+                // await this.DELETE_CITY(this.deleteValue.id);
+                await this.DELETE_CITY({ id: this.deleteValue.id });
                 await this.GET_CITY_LIST();
                 this.delete_dialog = false;
                 this.deleteValue = {};
@@ -246,7 +239,7 @@ export default {
                 // For filtered results, we handle pagination client-side
                 return;
             }
-            
+
             // For non-filtered results, use original pagination logic
             const query = {
                 page: page,
@@ -263,7 +256,7 @@ export default {
 
 <style scoped>
 .breadcrumbs-container {
-   background: linear-gradient(90deg, #4d90fe, #285bc7);
+    background: linear-gradient(90deg, #4d90fe, #285bc7);
     border-radius: 12px;
     padding: 15px;
     /* box-shadow: 0 6px 15px rgba(255, 87, 51, 0.4); */
@@ -302,7 +295,14 @@ export default {
 }
 
 @keyframes slideInDown {
-    0% { opacity: 0; transform: translateY(-100%); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>

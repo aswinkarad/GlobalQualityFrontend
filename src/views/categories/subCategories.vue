@@ -1,5 +1,6 @@
 <template>
-  <v-container class="px-4 hmmsdashboard" fluid style="min-height: 100vh; background: linear-gradient(135deg, #F5F7FA, #E8ECEF);">
+  <v-container class="px-4 hmmsdashboard" fluid
+    style="min-height: 100vh; background: linear-gradient(135deg, #F5F7FA, #E8ECEF);">
     <v-row align="center" class="top-bar">
       <v-col cols="12" md="6">
         <v-breadcrumbs :items="bread" class="breadcrumbs-container">
@@ -19,19 +20,17 @@
       SUB CATEGORIES
     </div>
 
-    <searchAndFilterToolbar 
-      :btn_text="cl_text" 
-      :show-button="showToolbar" 
-      :show-filter-icon="false" 
-      @btn_action="dialog = true" 
-      class="toolbar" 
-    />
-    <addCat :visible="dialog" @close="dialog = false" @save="addSubCategory" :title="dialog_title" class="dialog-animation" />
+    <searchAndFilterToolbar :btn_text="cl_text" :show-button="showToolbar" :show-filter-icon="false"
+      @btn_action="dialog = true" @fiterWithName="filterEqu_clName" class="toolbar" />
+    <addCat :visible="dialog" @close="dialog = false" @save="addSubCategory" :title="dialog_title"
+      class="dialog-animation" />
 
     <div class="mt-8 category-cards">
-      <categoryCard @clickOnCard="toEquipment" :cat="subCategoryList" @delteItem="deleteSubCat" @editItem="editSubCat" />
+      <categoryCard @clickOnCard="toEquipment" :cat="subCategoryList" @delteItem="deleteSubCat"
+        @editItem="editSubCat" />
     </div>
-    <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false" class="snackbar-animation" />
+    <snackbarVue :visible="snackbar" :text="mssg" :button="false" :color="snackColor" @close="snackbar = false"
+      class="snackbar-animation" />
   </v-container>
 </template>
 
@@ -101,6 +100,15 @@ export default {
         }
       }
     },
+    filterEqu_clName(val) {
+      const payload = {
+        search: val,
+        size: 15,
+        page: 1,
+      };
+      this.GET_SUB_CATEGORY(payload);
+    },
+
     toEquipment(item) {
       this.$router.push({ name: 'subEquipment', params: { sub_name: item.subcategoryName, id: item.id } });
     },
@@ -320,40 +328,95 @@ export default {
 
 /* CSS Keyframe Animations */
 @keyframes slideInDown {
-  0% { opacity: 0; transform: translateY(-100%); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes zoomInPop {
-  0% { opacity: 0; transform: scale(0.7); }
-  60% { opacity: 1; transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes cardPopIn {
-  0% { opacity: 0; transform: scale(0.8) translateY(20px); }
-  60% { opacity: 1; transform: scale(1.03) translateY(-3px); }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.03) translateY(-3px);
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInLeft {
-  0% { opacity: 0; transform: translateX(-100px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeInUp {
-  0% { opacity: 0; transform: translateY(50px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInRight {
-  0% { opacity: 0; transform: translateX(100px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Responsive Design */
